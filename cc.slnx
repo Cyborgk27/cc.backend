@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="CC.Api/CC.Api.csproj" />
+    <Project Path="CC.Application/CC.Application.csproj" />
+    <Project Path="CC.Domain/CC.Domain.csproj" />
+    <Project Path="CC.Infrastructure/CC.Infrastructure.csproj" />
+    <Project Path="CC.Utilities/CC.Utilities.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="CC.Tests/CC.Tests.csproj" Id="c9d1e436-d29b-4997-a5e5-a69a857b9c13" />
+  </Folder>
+</Solution>
