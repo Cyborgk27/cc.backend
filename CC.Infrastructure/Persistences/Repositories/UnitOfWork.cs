@@ -1,4 +1,5 @@
-﻿using CC.Domain.Repositories;
+﻿using CC.Application.Interfaces;
+using CC.Domain.Repositories;
 using CC.Infrastructure.Persistences.Contexts;
 
 namespace CC.Infrastructure.Persistences.Repositories
@@ -6,6 +7,7 @@ namespace CC.Infrastructure.Persistences.Repositories
     public class UnitOfWork : IUnitOfWork
     {
         private readonly AppDbContext _context;
+        private readonly IUserContext _userContext;
         public IFeatureRepository Features { get; private set; }
 
         public IRoleRepository Roles { get; private set; }
@@ -24,18 +26,19 @@ namespace CC.Infrastructure.Persistences.Repositories
 
         public ICatalogRepository Catalogs { get; private set; }
 
-        public UnitOfWork(AppDbContext context)
+        public UnitOfWork(AppDbContext context, IUserContext userContext)
         {
             _context = context;
-            Features = new FeatureRepository(_context);
-            Permissions = new PermissionRepository(_context);
-            Roles = new RoleRepository(_context);
-            RolePermissions = new RolePermissionRepository(_context);
-            Users = new UserRepository(_context);
-            Projects = new ProjectRepository(_context);
-            ProjectCatalogs = new ProjectCatalogRepository(_context);
-            ProjectApiKeys = new ProjectApiKeyRepository(_context);
-            Catalogs = new CatalogRepository(_context);
+            _userContext = userContext;
+            Features = new FeatureRepository(_context, _userContext);
+            Permissions = new PermissionRepository(_context, _userContext);
+            Roles = new RoleRepository(_context, _userContext);
+            RolePermissions = new RolePermissionRepository(_context, _userContext);
+            Users = new UserRepository(_context, _userContext);
+            Projects = new ProjectRepository(_context, _userContext);
+            ProjectCatalogs = new ProjectCatalogRepository(_context, _userContext);
+            ProjectApiKeys = new ProjectApiKeyRepository(_context, _userContext);
+            Catalogs = new CatalogRepository(_context, _userContext);
         }
 
         public void Dispose()

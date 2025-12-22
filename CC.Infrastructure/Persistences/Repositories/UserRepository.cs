@@ -7,7 +7,7 @@ namespace CC.Infrastructure.Persistences.Repositories
 {
     internal class UserRepository : GenericRepository<User, Guid>, IUserRepository
     {
-        public UserRepository(AppDbContext context) : base(context)
+        public UserRepository(AppDbContext context, Application.Interfaces.IUserContext userContext) : base(context, userContext)
         {
         }
 

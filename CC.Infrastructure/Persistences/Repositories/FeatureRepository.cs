@@ -6,7 +6,7 @@ namespace CC.Infrastructure.Persistences.Repositories
 {
     public class FeatureRepository : GenericRepository<Feature, int>, IFeatureRepository
     {
-        public FeatureRepository(AppDbContext context) : base(context)
+        public FeatureRepository(AppDbContext context, Application.Interfaces.IUserContext userContext) : base(context, userContext)
         {
         }
     }

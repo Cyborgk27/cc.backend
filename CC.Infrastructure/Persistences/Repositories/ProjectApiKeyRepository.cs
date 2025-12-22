@@ -7,7 +7,7 @@ namespace CC.Infrastructure.Persistences.Repositories
 {
     internal class ProjectApiKeyRepository : GenericRepository<ProjectApiKey, int>, IProjectApiKeyRepository
     {
-        public ProjectApiKeyRepository(AppDbContext context) : base(context)
+        public ProjectApiKeyRepository(AppDbContext context, Application.Interfaces.IUserContext userContext) : base(context, userContext)
         {
         }
 

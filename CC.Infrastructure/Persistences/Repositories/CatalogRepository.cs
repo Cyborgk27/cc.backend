@@ -7,7 +7,7 @@ namespace CC.Infrastructure.Persistences.Repositories
 {
     public class CatalogRepository : GenericRepository<Catalog, int>, ICatalogRepository
     {
-        public CatalogRepository(AppDbContext context) : base(context)
+        public CatalogRepository(AppDbContext context, Application.Interfaces.IUserContext userContext) : base(context, userContext)
         {
         }
 

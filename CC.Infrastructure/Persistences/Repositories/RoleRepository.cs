@@ -6,7 +6,7 @@ namespace CC.Infrastructure.Persistences.Repositories
 {
     public class RoleRepository : GenericRepository<Role, Guid>, IRoleRepository
     {
-        public RoleRepository(AppDbContext context) : base(context)
+        public RoleRepository(AppDbContext context, Application.Interfaces.IUserContext userContext) : base(context, userContext)
         {
         }
     }

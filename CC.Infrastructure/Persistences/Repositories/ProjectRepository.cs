@@ -7,7 +7,7 @@ namespace CC.Infrastructure.Persistences.Repositories
 {
     public class ProjectRepository : GenericRepository<Project, Guid>, IProjectRepository
     {
-        public ProjectRepository(AppDbContext context) : base(context)
+        public ProjectRepository(AppDbContext context, Application.Interfaces.IUserContext userContext) : base(context, userContext)
         {
         }
 

@@ -6,7 +6,7 @@ namespace CC.Infrastructure.Persistences.Repositories
 {
     public class PermissionRepository : GenericRepository<Permission, int>, IPermissionRepository
     {
-        public PermissionRepository(AppDbContext context) : base(context)
+        public PermissionRepository(AppDbContext context, Application.Interfaces.IUserContext userContext) : base(context, userContext)
         {
         }
     }
