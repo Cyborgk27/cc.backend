@@ -1,8 +1,6 @@
 using CC.Api.Middleware;
 using CC.Application.Extensions;
 using CC.Domain.Extensions;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +13,19 @@ var enableAuth = configuration.GetValue<bool>("SecuritySettings:EnableJwtAuthent
 // =====================
 builder.Services.AddInjectionInfrastructure(configuration);
 builder.Services.AddInjectionApplication(configuration);
+
+// =====================
+// CORS (Configuración Abierta)
+// =====================
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAnyOrigin", policy =>
+    {
+        policy.AllowAnyOrigin()   // Acepta cualquier dominio/IP
+              .AllowAnyMethod()   // Acepta GET, POST, PUT, DELETE, etc.
+              .AllowAnyHeader();  // Acepta cualquier encabezado (Authorization, Content-Type, etc.)
+    });
+});
 
 // =====================
 // Controllers
@@ -69,6 +80,7 @@ var app = builder.Build();
 // Middlewares
 // =====================
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseCors("AllowAnyOrigin");
 app.UseMiddleware<ApiKeyMiddleware>();
 
 if (app.Environment.IsDevelopment())

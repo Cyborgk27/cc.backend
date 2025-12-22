@@ -1,4 +1,5 @@
-﻿using CC.Domain.Common;
+﻿using CC.Application.Interfaces;
+using CC.Domain.Common;
 using CC.Domain.Repositories;
 using CC.Infrastructure.Persistences.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -10,37 +11,33 @@ namespace CC.Infrastructure.Persistences.Repositories
     {
         protected readonly AppDbContext _context;
         protected readonly DbSet<T> _dbSet;
+        private readonly IUserContext _userContext;
 
-        public GenericRepository(AppDbContext context)
+        public GenericRepository(AppDbContext context, IUserContext userContext)
         {
             _context = context;
             _dbSet = _context.Set<T>();
+            _userContext = userContext;
         }
 
         public async Task<T> AddAsync(T entity)
         {
-            entity.MarkAsCreated(Guid.Empty);
-
+            entity.MarkAsCreated(_userContext.UserId);
             await _dbSet.AddAsync(entity);
-            await _context.SaveChangesAsync();
             return entity;
         }
 
         public async Task<T> UpdateAsync(T entity)
         {
-            entity.MarkAsUpdated(Guid.Empty);
-
+            entity.MarkAsUpdated(_userContext.UserId);
             _context.Entry(entity).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
             return entity;
         }
 
         public async Task<T> DeleteAsync(T entity)
         {
-            entity.MarkAsDeleted(Guid.Empty);
-
+            entity.MarkAsDeleted(_userContext.UserId);
             _context.Entry(entity).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
             return entity;
         }
 

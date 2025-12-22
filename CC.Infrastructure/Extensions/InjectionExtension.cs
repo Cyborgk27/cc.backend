@@ -1,4 +1,5 @@
 ﻿using CC.Application.Interfaces;
+using CC.Application.Services;
 using CC.Domain.Repositories;
 using CC.Infrastructure.Persistences.Contexts;
 using CC.Infrastructure.Persistences.Repositories;
@@ -19,16 +20,20 @@ namespace CC.Domain.Extensions
         public static IServiceCollection AddInjectionInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             var assembly = typeof(AppDbContext).Assembly.FullName;
-            var connection = configuration.GetConnectionString("SQLiteConnection");
+            var connection = configuration.GetConnectionString("PostgresConnection");
+
+            services.AddHttpContextAccessor();
 
             services.AddDbContext<AppDbContext>(
-                options => options.UseSqlite(connection,
+                options => options.UseNpgsql(connection,
                 b => b.MigrationsAssembly(assembly)),
                 ServiceLifetime.Transient
                 );
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
+
+            services.AddScoped<IUserContext, UserContext>();
 
             services.AddSingleton<IPasswordHasher, PasswordHasher>();
             services.AddScoped<IJwtGenerator, JwtGenerator>();
