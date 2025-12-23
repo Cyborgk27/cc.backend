@@ -9,5 +9,9 @@ namespace CC.Application.Interfaces
         Task<BaseResponse<Guid>> CreateRoleAsync(RoleDto request);
         Task<BaseResponse<int>> CreateFeatureAsync(FeatureDto request);
         Task<BaseResponse<int>> CreatePermissionAsync(PermissionDto request);
+        Task<BaseResponse<IEnumerable<RoleDto>>> GetAllRolesAsync();
+        Task<BaseResponse<RoleDto>> GetRoleByIdAsync(Guid id);
+        Task<BaseResponse<IEnumerable<FeatureDto>>> GetAllFeaturesAsync();
+        Task<BaseResponse<IEnumerable<PermissionDto>>> GetAllPermissionsAsync();
     }
 }

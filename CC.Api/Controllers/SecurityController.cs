@@ -49,5 +49,37 @@ namespace CC.Api.Controllers
             var response = await _securityApp.AssignPermissionsToRoleAsync(id, permissionIds);
             return StatusCode(response.StatusCode, response);
         }
+
+        [HttpGet("role/all")]
+        [Permission("SECURITY", "READ")]
+        public async Task<IActionResult> GetAllRoles()
+        {
+            var response = await _securityApp.GetAllRolesAsync();
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet("role/{id:guid}")]
+        [Permission("SECURITY", "READ")]
+        public async Task<IActionResult> GetRoleById(Guid id)
+        {
+            var response = await _securityApp.GetRoleByIdAsync(id);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet("feature/all")]
+        [Permission("SECURITY", "READ")]
+        public async Task<IActionResult> GetAllFeatures()
+        {
+            var response = await _securityApp.GetAllFeaturesAsync();
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet("permission/all")]
+        [Permission("SECURITY", "READ")]
+        public async Task<IActionResult> GetAllPermissions()
+        {
+            var response = await _securityApp.GetAllPermissionsAsync();
+            return StatusCode(response.StatusCode, response);
+        }
     }
 }
