@@ -97,14 +97,13 @@ namespace CC.Application.Services
 
         public async Task<BaseResponse<IEnumerable<RoleDto>>> GetAllRolesAsync()
         {
-            // Obtenemos los roles incluyendo sus relaciones de permisos
             var roles = await _unitOfWork.Roles.GetAsync(
                 filter: r => !r.IsDeleted,
                 includeProperties: "RolePermissions"
             );
 
-            // Mapeamos manualmente a RoleDto para cumplir con la estructura de Records
             var response = roles.Select(r => new RoleDto(
+                r.Id,
                 r.Name,
                 r.ShowName,
                 r.RolePermissions.Select(rp => rp.PermissionId).ToList()
@@ -124,6 +123,7 @@ namespace CC.Application.Services
                 throw new DomainException("ROLE_NOT_FOUND", "No encontrado", "El rol solicitado no existe.");
 
             var dto = new RoleDto(
+                role.Id,
                 role.Name,
                 role.ShowName,
                 role.RolePermissions.Select(rp => rp.PermissionId).ToList()
@@ -137,6 +137,7 @@ namespace CC.Application.Services
             var features = await _unitOfWork.Features.GetAsync(filter: f => !f.IsDeleted);
 
             var response = features.Select(f => new FeatureDto(
+                f.Id,
                 f.Name,
                 f.ShowName,
                 f.Path,
@@ -151,6 +152,7 @@ namespace CC.Application.Services
             var permissions = await _unitOfWork.Permissions.GetAsync(filter: p => !p.IsDeleted);
 
             var response = permissions.Select(p => new PermissionDto(
+                p.Id,
                 p.Name,
                 p.ShowName,
                 p.FeatureId
