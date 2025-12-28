@@ -19,7 +19,7 @@ namespace CC.Api.Controllers
         }
 
         [HttpGet]
-        [Permission("PROJECTS", "READ")]
+        [Permission("PROJECT", "READ")]
         public async Task<IActionResult> GetPaged([FromQuery] int page = 1, [FromQuery] int size = 10, [FromQuery] string? name = null)
         {
             var response = await _projectApp.GetPagedProjectsAsync(page, size, name);
@@ -27,7 +27,7 @@ namespace CC.Api.Controllers
         }
 
         [HttpGet("{id:guid}")]
-        [Permission("PROJECTS", "READ")]
+        [Permission("PROJECT", "READ")]
         public async Task<IActionResult> GetById(Guid id)
         {
             var response = await _projectApp.GetProjectByIdAsync(id);
@@ -35,7 +35,7 @@ namespace CC.Api.Controllers
         }
 
         [HttpPost("save")]
-        [Permission("PROJECTS", "CREATE")]
+        [Permission("PROJECT", "CREATE")]
         public async Task<IActionResult> Save([FromBody] ProjectDto request)
         {
             var response = await _projectApp.SaveProjectAsync(request);
