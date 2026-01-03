@@ -22,22 +22,72 @@ namespace CC.Application.Services
         // --- GESTIÓN DE ROLES ---
         public async Task<BaseResponse<Guid>> CreateRoleAsync(RoleDto request)
         {
-            // El rol usa Guid y tiene name/showName
-            var newRole = new Role(request.Name.ToUpper(), request.ShowName);
+            // 1. Buscamos el rol cargando explícitamente sus permisos actuales
+            var roles = await _unitOfWork.Roles.GetAsync(
+                filter: x => x.Id == (request.Id ?? Guid.Empty),
+                includeProperties: "RolePermissions"
+            );
 
-            if (request.PermissionIds != null && request.PermissionIds.Any())
+            var role = roles.FirstOrDefault();
+
+            if (role == null)
             {
-                foreach (var pId in request.PermissionIds)
-                {
-                    // Usamos tu constructor con lógica de validación
-                    var assignment = new RolePermission(newRole.Id, pId);
-                    newRole.RolePermissions.Add(assignment);
-                }
-            }
+                // ===========================
+                // CASO: CREAR NUEVO
+                // ===========================
+                var nameUpper = request.Name.ToUpper().Trim();
 
-            await _unitOfWork.Roles.AddAsync(newRole);
-            await _unitOfWork.SaveChangesAsync();
-            return _serviceData.CreateResponse(newRole.Id, "Rol creado exitosamente.");
+                var exists = await _unitOfWork.Roles.GetAsync(x => x.Name == nameUpper);
+                if (exists.Any())
+                    return _serviceData.CreateResponse<Guid>(Guid.Empty, "El nombre del rol ya existe.");
+
+                var newRole = new Role(nameUpper, request.ShowName, request.Description ?? string.Empty);
+
+                if (request.PermissionIds != null && request.PermissionIds.Any())
+                {
+                    foreach (var pId in request.PermissionIds.Distinct())
+                    {
+                        newRole.RolePermissions.Add(new RolePermission(newRole.Id, pId));
+                    }
+                }
+
+                await _unitOfWork.Roles.AddAsync(newRole);
+                await _unitOfWork.SaveChangesAsync();
+
+                return _serviceData.CreateResponse(newRole.Id, "Rol creado exitosamente.");
+            }
+            else
+            {
+                // 1. Actualizar detalles (ShowName, etc.)
+                role.UpdateDetails(request.ShowName, request.Description ?? string.Empty);
+
+                // 2. LIMPIEZA DE SEGURIDAD
+                // Aunque creas que está vacío, esto asegura que el rastreador de EF 
+                // no tenga "fantasmas" de la consulta inicial.
+                role.RolePermissions.Clear();
+
+                // 3. ASIGNACIÓN ÚNICA
+                if (request.PermissionIds != null && request.PermissionIds.Any())
+                {
+                    // El .Distinct() evita que si el JSON trae [5, 6, 5], EF intente insertar el '5' dos veces.
+                    var uniquePermissionIds = request.PermissionIds.Distinct().ToList();
+
+                    foreach (var pId in uniquePermissionIds)
+                    {
+                        // Creamos la relación directamente
+                        var assignment = new RolePermission(role.Id, pId);
+                        role.RolePermissions.Add(assignment);
+                    }
+                }
+
+                // 4. EL CAMBIO VITAL:
+                // NO uses _unitOfWork.Roles.UpdateAsync(role).
+                // Al haber hecho el GetAsync al principio, EF ya sabe que 'role' existe. 
+                // Solo llama al Save directamente.
+                await _unitOfWork.SaveChangesAsync();
+
+                return _serviceData.CreateResponse(role.Id, "Rol actualizado exitosamente.");
+            }
         }
 
         // --- ASIGNACIÓN DE PERMISOS (Sincronización) ---
@@ -106,6 +156,7 @@ namespace CC.Application.Services
                 r.Id,
                 r.Name,
                 r.ShowName,
+                r.Description,
                 r.RolePermissions.Select(rp => rp.PermissionId).ToList()
             ));
 
@@ -126,6 +177,7 @@ namespace CC.Application.Services
                 role.Id,
                 role.Name,
                 role.ShowName,
+                role.Description,
                 role.RolePermissions.Select(rp => rp.PermissionId).ToList()
             );
 

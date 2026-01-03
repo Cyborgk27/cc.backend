@@ -19,6 +19,7 @@
         Guid? Id,
         string Name,
         string ShowName,
+        string Description,
         List<int> PermissionIds
     );
 }
