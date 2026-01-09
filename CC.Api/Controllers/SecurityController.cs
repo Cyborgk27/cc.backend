@@ -67,7 +67,7 @@ namespace CC.Api.Controllers
         }
 
         [HttpGet("feature/all")]
-        // [Permission("SECURITY", "READ")]
+        [Permission("SECURITY", "READ")]
         public async Task<IActionResult> GetAllFeatures()
         {
             var response = await _securityApp.GetAllFeaturesAsync();
