@@ -12,10 +12,12 @@ namespace CC.Api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthApplication _authApplication;
+        private readonly ISecurityApplication _securityApp;
 
-        public AuthController(IAuthApplication authApplication)
+        public AuthController(IAuthApplication authApplication, ISecurityApplication securityApp)
         {
             _authApplication = authApplication;
+            _securityApp = securityApp;
         }
 
         [HttpPost("login")]
@@ -51,6 +53,14 @@ namespace CC.Api.Controllers
             var response = await _authApplication.ConfirmEmailAsync(email, token);
 
             // Si la confirmación es exitosa, podrías incluso redirigir a una página de éxito en el Front
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet("roles")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetRolesForSelect()
+        {
+            var response = await _securityApp.GetAllRolesAsync();
             return StatusCode(response.StatusCode, response);
         }
     }
