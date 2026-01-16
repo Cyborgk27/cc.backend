@@ -28,7 +28,17 @@ namespace CC.Application.Services
                 pc.Catalog.ShowName,
                 pc.Catalog.Value,
                 pc.Catalog.Abbreviation,
-                pc.Catalog.Description
+                pc.Catalog.Description,
+                Childrens: pc.Catalog.Children?
+                    .Where(child => !child.IsDeleted) // Filtramos hijos no eliminados
+                    .Select(child => new ExternalCatalogResponse(
+                        child.Name,
+                        child.ShowName,
+                        child.Value,
+                        child.Abbreviation,
+                        child.Description,
+                        null // En este nivel de lista general, los hijos de los hijos suelen ir nulos
+                    )).ToList()
             ));
 
             // 3. Retornamos usando ServiceData para estandarizar

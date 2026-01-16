@@ -5,6 +5,7 @@
             string ShowName,
             string Value,
             string Abbreviation,
-            string? Description
+            string? Description,
+            IEnumerable<ExternalCatalogResponse>? Childrens = null
         );
 }
