@@ -17,6 +17,37 @@ namespace CC.Application.Services
             _serviceData = serviceData;
         }
 
+        public async Task<BaseResponse<ExternalCatalogResponse>> GetCatalogByCode(Guid projectId, string abbreviation)
+        {
+            var catalog = await _unitOfWork.ProjectCatalogs.GetCatalogByCode(projectId, abbreviation);
+
+            if(catalog is null)
+            {
+                return _serviceData.CreateResponse<ExternalCatalogResponse>(null, "Catálogo no encontrado.", statusCode: 404);
+            }
+
+            var data = new ExternalCatalogResponse(
+                catalog.Name,
+                catalog.ShowName,
+                catalog.Value,
+                catalog.Abbreviation,
+                catalog.Description,
+                Childrens: catalog.Children?
+                    .Where(child => !child.IsDeleted) // Filtramos hijos no eliminados
+                    .Select(child => new ExternalCatalogResponse(
+                        child.Name,
+                        child.ShowName,
+                        child.Value,
+                        child.Abbreviation,
+                        child.Description,
+                        null // En este nivel de detalle, los hijos de los hijos suelen ir nulos
+                    )).ToList()
+            );
+
+            return _serviceData.CreateResponse(data, "Catálogo recuperado exitosamente vía API Key.");
+
+        }
+
         public async Task<BaseResponse<IEnumerable<ExternalCatalogResponse>>> GetCatalogsByProjectIdAsync(Guid projectId)
         {
             // 1. Llamamos al método especializado del repositorio

@@ -19,5 +19,15 @@ namespace CC.Infrastructure.Persistences.Repositories
                 .Where(pc => pc.ProjectId == projectId && !pc.IsDeleted)
                 .ToListAsync();
         }
+
+        public async Task<Catalog?> GetCatalogByCode(Guid projectId, string abbreviation)
+        {
+            return await _context.Set<ProjectCatalog>()
+                .Include(pc => pc.Catalog)
+                .ThenInclude(c => c.Children)
+                .Where(pc => pc.ProjectId == projectId && !pc.IsDeleted && pc.Catalog.Abbreviation == abbreviation)
+                .Select(pc => pc.Catalog)
+                .FirstOrDefaultAsync();
+        }
     }
 }
