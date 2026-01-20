@@ -44,7 +44,7 @@ namespace CC.Application.Services
                 throw new DomainException("AUTH_FAILED", "Credenciales Inválidas", "Usuario o contraseña incorrectos.");
 
             // REGLA DE NEGOCIO: Bloquear acceso si no está activo (aprobado por admin)
-            if (!user.IsDeleted)
+            if (user.IsDeleted)
             {
                 return _serviceData.CreateResponse<AuthResponse>(
                     null!,
