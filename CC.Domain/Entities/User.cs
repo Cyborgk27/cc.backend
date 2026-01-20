@@ -41,9 +41,26 @@ namespace CC.Domain.Entities
             RoleId = roleId;
             EmailConfirmed = false;
             EmailConfirmationToken = Guid.NewGuid().ToString("N");
+            IsDeleted = true;
         }
 
         #region Reglas de Negocio
+        public void Activate()
+        {
+            if (IsDeleted)
+                throw new DomainException("USER_ALREADY_ACTIVE", "El usuario ya está activo.");
+
+            // Aquí podrías validar que el email esté confirmado si fuera requisito
+            // if (!EmailConfirmed) throw new DomainException("EMAIL_NOT_CONFIRMED", "No se puede activar sin email confirmado.");
+
+            IsDeleted = true;
+        }
+
+        public void Deactivate()
+        {
+            IsDeleted = true;
+            RevokeRefreshToken(); // Por seguridad, si lo desactivan, quitamos el acceso
+        }
 
         public void UpdateProfile(string firstName, string lastName, string? phoneNumber)
         {

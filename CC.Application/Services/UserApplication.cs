@@ -116,4 +116,36 @@ public class UserApplication : IUserApplication
 
         return _serviceData.CreateResponse(dto, ReplyMessage.MESSAGE_QUERY);
     }
+
+    public async Task<BaseResponse<bool>> ActivateUserAsync(Guid userId)
+    {
+        // 1. Buscamos al usuario por su ID
+        var user = await _unitOfWork.Users.GetByIdAsync(userId);
+
+        if (user == null)
+        {
+            return _serviceData.CreateResponse(false, "Usuario no encontrado.", 404);
+        }
+
+        try
+        {
+            // 2. Ejecutamos la regla de negocio definida en la Entidad de Dominio
+            user.Activate();
+
+            // 3. Actualizamos y guardamos
+            await _unitOfWork.Users.UpdateAsync(user);
+            await _unitOfWork.SaveChangesAsync();
+
+            return _serviceData.CreateResponse(true, "Usuario activado y aprobado exitosamente.");
+        }
+        catch (DomainException ex)
+        {
+            // Capturamos si la entidad lanza una excepción (ej: ya estaba activo)
+            return _serviceData.CreateResponse(false, ex.Message, 400);
+        }
+        catch (Exception ex)
+        {
+            return _serviceData.CreateResponse(false, "Error interno al activar usuario.", 500);
+        }
+    }
 }

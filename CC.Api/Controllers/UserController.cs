@@ -50,5 +50,13 @@ namespace CC.Api.Controllers
             var response = await _userApp.SaveUserAsync(request);
             return StatusCode(response.StatusCode, response);
         }
+
+        [HttpPatch("activate/{userId:guid}")]
+        [Permission("USERS", "UPDATE")]
+        public async Task<IActionResult> ActivateUser(Guid userId)
+        {
+            var response = await _userApp.ActivateUserAsync(userId);
+            return StatusCode(response.StatusCode, response);
+        }
     }
 }

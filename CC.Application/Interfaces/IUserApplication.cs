@@ -8,5 +8,6 @@ namespace CC.Application.Interfaces
         Task<BaseResponse<IEnumerable<UserDto>>> GetPagedUsersAsync(int page, int size, string? search = null);
         Task<BaseResponse<UserDto>> GetUserByIdAsync(Guid id);
         Task<BaseResponse<bool>> SaveUserAsync(UserDto dto);
+        Task<BaseResponse<bool>> ActivateUserAsync(Guid userId);
     }
 }
