@@ -75,7 +75,7 @@ public class UserApplication : IUserApplication
             filter: x => (string.IsNullOrEmpty(search) ||
                          x.Email.Contains(search) ||
                          x.UserName.Contains(search) ||
-                         x.FirstName.Contains(search)) && !x.IsDeleted,
+                         x.FirstName.Contains(search)),
             orderBy: x => x.OrderBy(f => f.UserName)
             //includeProperties: "Role" // Para traer el nombre del rol en el listado
         );
