@@ -5,5 +5,6 @@
         Task<bool> SendEmailAsync(string to, string subject, string body);
         Task<bool> SendConfirmationEmailAsync(string to, string userName);
         Task<bool> SendLoginNotificationEmailAsync(string to, string userName);
+        Task<bool> SendNotificationActiveAccount(string to, string username);
     }
 }

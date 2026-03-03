@@ -115,5 +115,49 @@ namespace CC.Infrastructure.Services
 
             return await SendEmailAsync(to, "⚠️ Alerta de Inicio de Sesión - CC System", body);
         }
+
+        public async Task<bool> SendNotificationActiveAccount(string to, string username)
+        {
+            string loginUrl = "https://ccfrontend-production-307f.up.railway.app/auth/sign-in"; // Ajusta a tu URL real
+
+            string body = $@"
+                <div style='font-family: ""Segoe UI"", Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; padding: 50px 20px; color: #1e293b;'>
+                    <div style='max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.08);'>
+            
+                        <div style='background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 50px; text-align: center;'>
+                            <div style='background-color: rgba(255,255,255,0.2); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;'>
+                                <span style='font-size: 40px;'>✅</span>
+                            </div>
+                            <h1 style='color: #ffffff; margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.5px;'>¡Cuenta Activada!</h1>
+                        </div>
+
+                        <div style='padding: 40px; text-align: center;'>
+                            <h2 style='color: #334155; margin-top: 0; font-size: 22px;'>¡Buenas noticias, {username}!</h2>
+                            <p style='color: #64748b; font-size: 17px; line-height: 1.8; margin-bottom: 30px;'>
+                                Tu cuenta en <strong>CC System</strong> ha sido revisada y aprobada por nuestro equipo administrativo. Ya tienes acceso total a todas nuestras funciones.
+                            </p>
+
+                            <div style='margin: 40px 0;'>
+                                <a href='{loginUrl}' style='background-color: #10b981; color: #ffffff; padding: 16px 45px; text-decoration: none; border-radius: 12px; font-weight: bold; font-size: 18px; display: inline-block; box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3); transition: all 0.3s ease;'>
+                                    Ingresar al Sistema
+                                </a>
+                            </div>
+
+                            <div style='background-color: #f1f5f9; border-radius: 12px; padding: 20px; margin-top: 20px;'>
+                                <p style='margin: 0; color: #475569; font-size: 14px;'>
+                                    <strong>Sugerencia:</strong> Te recomendamos marcar nuestra página en tus favoritos para un acceso más rápido.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div style='background-color: #f8fafc; padding: 30px; text-align: center; border-top: 1px solid #f1f5f9;'>
+                            <p style='margin: 0; font-size: 13px; color: #94a3b8;'>Si tienes problemas para ingresar, contacta a soporte técnico.</p>
+                            <p style='margin: 10px 0 0 0; font-size: 13px; color: #94a3b8; font-weight: bold;'>© 2026 CC System</p>
+                        </div>
+                    </div>
+                </div>";
+
+            return await SendEmailAsync(to, "¡Felicidades! Tu cuenta ha sido activada - CC System", body);
+        }
     }
 }

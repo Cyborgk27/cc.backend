@@ -12,6 +12,7 @@ public class UserApplication : IUserApplication
     private readonly IUnitOfWork _unitOfWork;
     private readonly ServiceData _serviceData;
     private readonly IPasswordHasher _hasher; // Tu servicio de hashing inyectado
+    private readonly IEmailService _emailService; // Para enviar correos
 
     public UserApplication(IUnitOfWork unitOfWork, ServiceData serviceData, IPasswordHasher hasher)
     {
@@ -135,6 +136,8 @@ public class UserApplication : IUserApplication
             // 3. Actualizamos y guardamos
             await _unitOfWork.Users.UpdateAsync(user);
             await _unitOfWork.SaveChangesAsync();
+
+            await _emailService.SendLoginNotificationEmailAsync(user.Email, user.UserName);
 
             return _serviceData.CreateResponse(true, "Usuario activado y aprobado exitosamente.");
         }
