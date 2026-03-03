@@ -9,13 +9,13 @@ var configuration = builder.Configuration;
 var enableAuth = configuration.GetValue<bool>("SecuritySettings:EnableJwtAuthentication");
 
 // =====================
-// Inyección de capas
+// InyecciÃ³n de capas
 // =====================
 builder.Services.AddInjectionInfrastructure(configuration);
 builder.Services.AddInjectionApplication(configuration);
 
 // =====================
-// CORS (Configuración Abierta)
+// CORS (Configuraciï¿½n Abierta)
 // =====================
 builder.Services.AddCors(options =>
 {
@@ -49,7 +49,7 @@ builder.Services.AddSwaggerGen(c =>
     {
         var securitySchemeId = "Bearer";
 
-        // 1. Definición del esquema
+        // 1. Definiciï¿½n del esquema
         c.AddSecurityDefinition(securitySchemeId, new OpenApiSecurityScheme
         {
             Name = "Authorization",

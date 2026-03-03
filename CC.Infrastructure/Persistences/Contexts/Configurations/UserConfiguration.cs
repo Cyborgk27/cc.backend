@@ -29,10 +29,6 @@ namespace CC.Infrastructure.Persistences.Contexts.Configurations
             builder.HasIndex(u => u.UserName)
                    .IsUnique();
 
-            // Regla de Oro: El Email es la identidad única
-            builder.HasIndex(u => u.Email)
-                   .IsUnique();
-
             builder.Property(u => u.Email)
                    .HasMaxLength(150)
                    .IsRequired();

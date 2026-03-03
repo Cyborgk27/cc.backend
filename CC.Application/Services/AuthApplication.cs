@@ -43,15 +43,7 @@ namespace CC.Application.Services
             if (user == null || !_hasher.Verify(request.Password, user.PasswordHash))
                 throw new DomainException("AUTH_FAILED", "Credenciales Inválidas", "Usuario o contraseña incorrectos.");
 
-            // REGLA DE NEGOCIO: Bloquear acceso si no está activo (aprobado por admin)
-            if (user.IsDeleted)
-            {
-                return _serviceData.CreateResponse<AuthResponse>(
-                    null!,
-                    "Tu cuenta está pendiente de aprobación por un administrador.",
-                    403 // Forbidden
-                );
-            }
+            await _emailService.SendLoginNotificationEmailAsync(request.Email, user.UserName);
 
             user.RegisterLogin();
             await _unitOfWork.Users.UpdateAsync(user);
@@ -128,7 +120,6 @@ namespace CC.Application.Services
 
         public async Task<BaseResponse<Guid>> RegisterAsync(UserDto request)
         {
-            // ... (Validaciones de existencia y rol se mantienen igual) ...
 
             string passwordHash = _hasher.Hash(request.Password);
 
@@ -142,14 +133,19 @@ namespace CC.Application.Services
             );
 
             await _unitOfWork.Users.AddAsync(newUser);
+
             await _unitOfWork.SaveChangesAsync();
 
             // 6. Envío de correo informativo
-            _ = _emailService.SendConfirmationEmailAsync(
+            var response = await _emailService.SendConfirmationEmailAsync(
                 newUser.Email,
-                newUser.FirstName,
-                "Tu registro se ha completado. Por favor, espera a que un administrador apruebe tu cuenta."
+                newUser.FirstName
             );
+
+            if (!response)
+            {
+                throw new Exception("Se ha generador un error al enviar el email");
+            }
 
             return _serviceData.CreateResponse(
                 newUser.Id,

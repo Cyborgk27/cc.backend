@@ -3,6 +3,7 @@
     public interface IEmailService
     {
         Task<bool> SendEmailAsync(string to, string subject, string body);
-        Task<bool> SendConfirmationEmailAsync(string to, string userName, string token);
+        Task<bool> SendConfirmationEmailAsync(string to, string userName);
+        Task<bool> SendLoginNotificationEmailAsync(string to, string userName);
     }
 }

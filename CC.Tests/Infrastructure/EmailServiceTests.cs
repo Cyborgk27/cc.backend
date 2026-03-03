@@ -57,7 +57,7 @@ namespace CC.Tests.Infrastructure
             var emailService = new EmailService(configuration);
 
             // Act
-            var result = await emailService.SendConfirmationEmailAsync("cepedayupanqui.kevin@gmail.com", "Juan Pérez", "token-de-prueba-123");
+            var result = await emailService.SendConfirmationEmailAsync("cepedayupanqui.kevin@gmail.com", "Juan Pérez");
 
             // Assert
             Assert.True(result);
