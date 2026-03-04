@@ -15,7 +15,8 @@ namespace CC.Domain.Repositories
             int pageSize,
             Expression<Func<T, bool>>? filter = null,
             Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null, 
-            Func<IQueryable<T>, IQueryable<T>>? include = null);
+            Func<IQueryable<T>, IQueryable<T>>? include = null,
+            string? includeProperties = null);
 
         Task<IEnumerable<T>> GetAsync(
             Expression<Func<T, bool>>? filter = null, 

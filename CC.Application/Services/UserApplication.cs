@@ -78,8 +78,8 @@ public class UserApplication : IUserApplication
                          x.Email.Contains(search) ||
                          x.UserName.Contains(search) ||
                          x.FirstName.Contains(search)),
-            orderBy: x => x.OrderBy(f => f.UserName)
-            //includeProperties: "Role" // Para traer el nombre del rol en el listado
+            orderBy: x => x.OrderBy(f => f.AuditCreateDate),
+            includeProperties: "Role"
         );
 
         var dtos = pagedResult.Items.Select(u => new UserDto(
@@ -90,7 +90,7 @@ public class UserApplication : IUserApplication
             u.FirstName,
             u.LastName,
             u.RoleId,
-            u.Role?.Name,
+            u.Role?.ShowName,
             u.IsDeleted
         ));
 

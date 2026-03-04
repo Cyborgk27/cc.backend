@@ -58,7 +58,8 @@ namespace CC.Infrastructure.Persistences.Repositories
             int pageSize,
             Expression<Func<T, bool>>? filter = null,
             Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-            Func<IQueryable<T>, IQueryable<T>>? include = null)
+            Func<IQueryable<T>, IQueryable<T>>? include = null,
+            string? includeProperties = null)
         {
             IQueryable<T> query = _dbSet.AsNoTracking();
 
@@ -66,6 +67,14 @@ namespace CC.Infrastructure.Persistences.Repositories
                 query = query.Where(filter);
 
             int totalCount = await query.CountAsync();
+
+            if (includeProperties != null)
+            {
+                foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    query = query.Include(includeProperty);
+                }
+            }
 
             if (orderBy != null)
                 query = orderBy(query);
