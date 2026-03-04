@@ -36,7 +36,7 @@ namespace CC.Application.Services
         {
             var identifier = request.Email.ToLower().Trim();
             var user = (await _unitOfWork.Users.GetAsync(
-                filter: u => (u.Email == identifier || u.UserName == identifier) && !u.IsDeleted,
+                filter: u => (u.UserName == identifier) && !u.IsDeleted,
                 includeProperties: "Role.RolePermissions.Permission.Feature"
             )).FirstOrDefault();
 
