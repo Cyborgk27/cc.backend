@@ -8,5 +8,6 @@ namespace CC.Application.Interfaces
         Task<BaseResponse<IEnumerable<ProjectDto>>> GetPagedProjectsAsync(int page, int size, string? name = null);
         Task<BaseResponse<ProjectDto>> GetProjectByIdAsync(Guid id);
         Task<BaseResponse<bool>> SaveProjectAsync(ProjectDto dto);
+        Task<BaseResponse<bool>> DeleteProjectAsync(Guid id);
     }
 }

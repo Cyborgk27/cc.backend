@@ -146,5 +146,15 @@ namespace CC.Application.Services
             await _unitOfWork.SaveChangesAsync();
             return _serviceData.CreateResponse(true, ReplyMessage.MESSAGE_SAVE);
         }
+
+        public async Task<BaseResponse<bool>> DeleteProjectAsync(Guid id)
+        {
+            var project = await _unitOfWork.Projects.GetByIdAsync(id);
+            if (project == null || project.IsDeleted)
+                throw new EntityNotFoundException("Project", id);
+            await _unitOfWork.Projects.DeleteAsync(project);
+            await _unitOfWork.SaveChangesAsync();
+            return _serviceData.CreateResponse(true, ReplyMessage.MESSAGE_DELETE);
+        }
     }
 }
