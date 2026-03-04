@@ -73,7 +73,7 @@ namespace CC.Application.Services
             var pagedResult = await _unitOfWork.Catalogs.GetPagedAsync(
                 page,
                 size,
-                filter: x => (string.IsNullOrEmpty(name) || x.Name.Contains(name)) && !x.IsDeleted && x.IsParent,
+                filter: x => (string.IsNullOrEmpty(name) || x.Name.Contains(name)) && x.IsParent,
                 orderBy: x => x.OrderBy(f => f.ShowName)
             );
 

@@ -27,7 +27,7 @@ namespace CC.Application.Services
             var pagedResult = await _unitOfWork.Projects.GetPagedAsync(
                 page,
                 size,
-                filter: x => (string.IsNullOrEmpty(name) || x.Name.Contains(name)) && !x.IsDeleted,
+                filter: x => (string.IsNullOrEmpty(name) || x.Name.Contains(name)),
                 orderBy: x => x.OrderBy(f => f.ShowName)
             );
 

@@ -26,7 +26,7 @@ public class DashboardService : IDashboardService
 
         // 1. Obtener proyectos con sus relaciones (API Keys y Catálogos asignados)
         var projects = await _unitOfWork.Projects.GetAsync(
-            filter: p => p.AuditCreateUser == currentUserId && !p.AuditDeleteDate.HasValue,
+            filter: p => !p.AuditDeleteDate.HasValue,
             includeProperties: "ProjectCatalogs,ApiKeys"
         );
 
