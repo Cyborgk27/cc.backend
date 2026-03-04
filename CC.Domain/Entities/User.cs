@@ -53,7 +53,7 @@ namespace CC.Domain.Entities
             // Aquí podrías validar que el email esté confirmado si fuera requisito
             // if (!EmailConfirmed) throw new DomainException("EMAIL_NOT_CONFIRMED", "No se puede activar sin email confirmado.");
 
-            IsDeleted = true;
+            IsDeleted = false;
         }
 
         public void Deactivate()

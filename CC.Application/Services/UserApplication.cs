@@ -14,11 +14,12 @@ public class UserApplication : IUserApplication
     private readonly IPasswordHasher _hasher; // Tu servicio de hashing inyectado
     private readonly IEmailService _emailService; // Para enviar correos
 
-    public UserApplication(IUnitOfWork unitOfWork, ServiceData serviceData, IPasswordHasher hasher)
+    public UserApplication(IUnitOfWork unitOfWork, ServiceData serviceData, IPasswordHasher hasher, IEmailService emailService)
     {
         _unitOfWork = unitOfWork;
         _serviceData = serviceData;
         _hasher = hasher;
+        _emailService = emailService;
     }
 
     public async Task<BaseResponse<bool>> SaveUserAsync(UserDto dto)
@@ -137,7 +138,7 @@ public class UserApplication : IUserApplication
             await _unitOfWork.Users.UpdateAsync(user);
             await _unitOfWork.SaveChangesAsync();
 
-            await _emailService.SendLoginNotificationEmailAsync(user.Email, user.UserName);
+            await _emailService.SendNotificationActiveAccount(user.Email, user.UserName);
 
             return _serviceData.CreateResponse(true, "Usuario activado y aprobado exitosamente.");
         }
