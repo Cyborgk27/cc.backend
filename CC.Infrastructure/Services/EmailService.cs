@@ -28,6 +28,10 @@ namespace CC.Infrastructure.Services
 
                 smtp.ServerCertificateValidationCallback = (s, c, h, e) => true;
 
+                smtp.AuthenticationMechanisms.Remove("XOAUTH2"); // Gmail a veces lo pide, pero tú usas App Password
+                smtp.AuthenticationMechanisms.Remove("GSSAPI"); // ESTA ES LA QUE DA EL ERROR
+                smtp.AuthenticationMechanisms.Remove("NTLM");
+
                 await smtp.ConnectAsync(_config["SmtpSettings:Server"], int.Parse(_config["SmtpSettings:Port"]), MailKit.Security.SecureSocketOptions.StartTls);
                 await smtp.AuthenticateAsync(_config["SmtpSettings:Username"], _config["SmtpSettings:Password"]);
                 await smtp.SendAsync(email);
