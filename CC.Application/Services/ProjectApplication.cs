@@ -156,5 +156,21 @@ namespace CC.Application.Services
             await _unitOfWork.SaveChangesAsync();
             return _serviceData.CreateResponse(true, ReplyMessage.MESSAGE_DELETE);
         }
+
+        public async Task<BaseResponse<bool>> DeleteApiKey(int apiKeyId)
+        {
+            var apiKey = await _unitOfWork.ProjectApiKeys.GetByIdAsync(apiKeyId);
+
+            if (apiKey == null || apiKey.IsDeleted)
+                throw new EntityNotFoundException("ProjectApiKey", apiKeyId);
+
+            apiKey.Revoke(); // Método de dominio para desactivar la API Key
+
+            await _unitOfWork.ProjectApiKeys.DeleteAsync(apiKey); // Borrado lógico en el repositorio
+
+            await _unitOfWork.SaveChangesAsync();
+
+            return _serviceData.CreateResponse(true, ReplyMessage.MESSAGE_DELETE);
+        }
     }
 }

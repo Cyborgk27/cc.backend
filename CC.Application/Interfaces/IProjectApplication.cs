@@ -9,5 +9,6 @@ namespace CC.Application.Interfaces
         Task<BaseResponse<ProjectDto>> GetProjectByIdAsync(Guid id);
         Task<BaseResponse<bool>> SaveProjectAsync(ProjectDto dto);
         Task<BaseResponse<bool>> DeleteProjectAsync(Guid id);
+        Task<BaseResponse<bool>> DeleteApiKey(int apiKeyId);
     }
 }

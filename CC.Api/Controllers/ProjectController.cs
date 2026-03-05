@@ -49,5 +49,13 @@ namespace CC.Api.Controllers
             var response = await _projectApp.DeleteProjectAsync(id);
             return StatusCode(response.StatusCode, response);
         }
+
+        [HttpDelete("api-key/{id:int}")]
+        [Permission("PROJECT", "DELETE")]
+        public async Task<IActionResult> DeleteApiKey(int id)
+        {
+            var response = await _projectApp.DeleteApiKey(id);
+            return StatusCode(response.StatusCode, response);
+        }
     }
 }
