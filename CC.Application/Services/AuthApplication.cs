@@ -43,7 +43,17 @@ namespace CC.Application.Services
             if (user == null || !_hasher.Verify(request.Password, user.PasswordHash))
                 throw new DomainException("AUTH_FAILED", "Credenciales Inválidas", "Usuario o contraseña incorrectos.");
 
-            await _emailService.SendLoginNotificationEmailAsync(request.Email, user.UserName);
+            _ = Task.Run(async () => {
+                try
+                {
+                    await _emailService.SendLoginNotificationEmailAsync(request.Email, user.UserName);
+                }
+                catch (Exception ex)
+                {
+                    // Loguear error de email sin afectar al usuario
+                    Console.WriteLine($"Error notificación login: {ex.Message}");
+                }
+            });
 
             user.RegisterLogin();
             await _unitOfWork.Users.UpdateAsync(user);
