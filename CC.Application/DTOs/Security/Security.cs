@@ -12,7 +12,7 @@
         int? Id,
         string Name,
         string ShowName,
-        int? FeatureId
+        int FeatureId
     );
 
     public record RoleDto(

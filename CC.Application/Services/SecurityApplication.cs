@@ -119,55 +119,77 @@ namespace CC.Application.Services
         // --- GESTIÓN DE FEATURES ---
         public async Task<BaseResponse<int>> CreateFeatureAsync(FeatureDto request)
         {
-            //var feature = new Feature(request.Name, request.ShowName, request.Path, request.Icon);
-            //await _unitOfWork.Features.AddAsync(feature);
-            //await _unitOfWork.SaveChangesAsync();
-            //return _serviceData.CreateResponse(feature.Id, "Módulo creado.");
-
-            if (request.Id.HasValue)
+            if (request.Id.HasValue && request.Id.Value > 0)
             {
-                var existingFeature = await _unitOfWork.Features.GetAsync(f => f.Id == request.Id.Value && !f.IsDeleted);
-                if (!existingFeature.Any())
-                    throw new DomainException("FEATURE_EXISTS", "Error", "Ya existe un módulo con el ID especificado.");
+                // 1. Buscamos el registro (Asegúrate de que GetAsync devuelva algo que puedas actualizar)
+                var features = await _unitOfWork.Features.GetAsync(f => f.Id == request.Id.Value && !f.IsDeleted);
+                var featureToUpdate = features.FirstOrDefault();
 
-                var featureToUpdate = existingFeature.First();
+                if (featureToUpdate == null)
+                    throw new DomainException("FEATURE_NOT_FOUND", "Error", "No se encontró el módulo para actualizar.");
+
+                // 2. Aplicamos los cambios usando el método de tu Entidad
                 featureToUpdate.UpdateDetails(request.ShowName, request.Path, request.Icon);
 
+                // 3. ¡ESTA ES LA PARTE QUE FALTABA! Notificar cambios y Guardar
+                await _unitOfWork.Features.UpdateAsync(featureToUpdate); // Opcional dependiendo de tu repo, pero recomendado
+                await _unitOfWork.SaveChangesAsync(); // <--- SIN ESTO NO SE GUARDA NADA
+
+                return _serviceData.CreateResponse(featureToUpdate.Id, "Módulo actualizado correctamente.");
             }
             else
             {
+                // MODO CREACIÓN
                 var nameUpper = request.Name.ToUpper().Trim();
                 var exists = await _unitOfWork.Features.GetAsync(f => f.Name == nameUpper && !f.IsDeleted);
+
                 if (exists.Any())
                     throw new DomainException("FEATURE_EXISTS", "Error", "Ya existe un módulo con el nombre especificado.");
+
                 var newFeature = new Feature(nameUpper, request.ShowName, request.Path, request.Icon);
+
                 await _unitOfWork.Features.AddAsync(newFeature);
                 await _unitOfWork.SaveChangesAsync();
+
                 return _serviceData.CreateResponse(newFeature.Id, "Módulo creado correctamente.");
             }
-
-            return _serviceData.CreateResponse(request.Id.Value, "Módulo actualizado correctamente.");
         }
 
-        public async Task<BaseResponse<int>> CreatePermissionAsync(PermissionDto request) 
+        public async Task<BaseResponse<int>> CreatePermissionAsync(PermissionDto request)
         {
-            var featureExists = await _unitOfWork.Features.AnyAsync(f => f.Id == request.FeatureId && !f.IsDeleted);
-            if (!featureExists)
-                throw new DomainException("FEATURE_NOT_FOUND", "Error", "La feature especificada no existe.");
+            int resultId;
 
-            // 2. Crear la entidad Permiso (usando tu regla de name y showName)
-            // El constructor de tu entidad Permission debería recibir estos datos
-            var newPermission = new Permission(
-                request.Name.ToUpper().Trim(),
-                request.ShowName,
-                request.FeatureId
-            );
+            if (request.Id.HasValue && request.Id.Value > 0)
+            {
+                // --- MODO EDICIÓN ---
+                var existingPermission = await _unitOfWork.Permissions.GetByIdAsync(request.Id.Value);
 
-            // 3. Persistencia
-            await _unitOfWork.Permissions.AddAsync(newPermission);
+                if (existingPermission == null)
+                    throw new DomainException("NOT_FOUND", "No encontrado", $"El permiso con ID {request.Id} no existe.");
+
+                // Usamos el método Update de tu clase de dominio (esto valida las reglas de negocio)
+                existingPermission.Update(request.Name, request.ShowName);
+
+                // EF Core detecta los cambios automáticamente al estar trackeado
+                await _unitOfWork.Permissions.UpdateAsync(existingPermission);
+                resultId = existingPermission.Id;
+            }
+            else
+            {
+                // --- MODO CREACIÓN ---
+                var newPermission = new Permission(request.Name, request.ShowName, request.FeatureId);
+
+                await _unitOfWork.Permissions.AddAsync(newPermission);
+
+                // Guardamos aquí para que Postgres genere el ID y lo asigne a newPermission.Id
+                await _unitOfWork.SaveChangesAsync();
+                resultId = newPermission.Id;
+            }
+
+            // Guardar cambios finales (para el caso de Update)
             await _unitOfWork.SaveChangesAsync();
 
-            return _serviceData.CreateResponse(newPermission.Id, "Permiso creado correctamente.");
+            return _serviceData.CreateResponse(resultId, "Operación realizada con éxito.");
         }
 
         public async Task<BaseResponse<IEnumerable<RoleDto>>> GetAllRolesAsync()
