@@ -6,7 +6,7 @@ namespace CC.Infrastructure.Security
     {
         public string Hash(string password)
         {
-            return BCrypt.Net.BCrypt.HashPassword(password);
+            return BCrypt.Net.BCrypt.HashPassword(password, workFactor: 10);
         }
 
         public bool Verify(string password, string passwordHash)
