@@ -86,7 +86,7 @@ namespace CC.Application.Services
                 ))
                 .ToList();
 
-            var rolesList = new List<string> { user.Role.Name };
+            var rolesList = new List<string> { user.Role.ShowName };
 
             // 3. Generar JWT
             var token = _jwtGenerator.GenerateToken(
