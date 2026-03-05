@@ -25,6 +25,9 @@ namespace CC.Infrastructure.Services
                 email.Body = builder.ToMessageBody();
 
                 using var smtp = new SmtpClient();
+
+                smtp.ServerCertificateValidationCallback = (s, c, h, e) => true;
+
                 await smtp.ConnectAsync(_config["SmtpSettings:Server"], int.Parse(_config["SmtpSettings:Port"]), MailKit.Security.SecureSocketOptions.StartTls);
                 await smtp.AuthenticateAsync(_config["SmtpSettings:Username"], _config["SmtpSettings:Password"]);
                 await smtp.SendAsync(email);
