@@ -50,5 +50,13 @@ namespace CC.Api.Controllers
             var response = await _catalogApp.SaveCatalogAsync(request);
             return StatusCode(response.StatusCode, response);
         }
+
+        [HttpDelete("{id:int}")]
+        [Permission("CATALOGS", "DELETE")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var response = await _catalogApp.DeleteCatalogAsync(id);
+            return StatusCode(response.StatusCode, response);
+        }
     }
 }

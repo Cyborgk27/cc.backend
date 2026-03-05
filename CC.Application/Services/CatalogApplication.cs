@@ -96,6 +96,16 @@ namespace CC.Application.Services
             var dto = MapToDto(catalog, true);
             return _serviceData.CreateResponse(dto, ReplyMessage.MESSAGE_QUERY);
         }
+
+        public async Task<BaseResponse<bool>> DeleteCatalogAsync(int id)
+        {
+            var catalog = await _unitOfWork.Catalogs.GetByIdAsync(id);
+            if (catalog == null) throw new EntityNotFoundException("Catalog", id);
+            await _unitOfWork.Catalogs.DeleteAsync(catalog);
+            await _unitOfWork.SaveChangesAsync();
+            return _serviceData.CreateResponse(true, ReplyMessage.MESSAGE_DELETE);
+        }
+
         // Helper para mapeo recursivo
         private CatalogDto MapToDto(Catalog entity, bool includeChildren)
         {

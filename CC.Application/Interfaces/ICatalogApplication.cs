@@ -8,5 +8,6 @@ namespace CC.Application.Interfaces
         Task<BaseResponse<bool>> SaveCatalogAsync(CatalogDto dto);
         Task<BaseResponse<IEnumerable<CatalogDto>>> GetPagedCatalogsAsync(int page, int size, string? name = null);
         Task<BaseResponse<CatalogDto>> GetCatalogByIdAsync(int id);
+        Task<BaseResponse<bool>> DeleteCatalogAsync(int id);
     }
 }
