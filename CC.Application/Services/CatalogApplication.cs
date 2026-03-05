@@ -74,7 +74,7 @@ namespace CC.Application.Services
                 page,
                 size,
                 filter: x => (string.IsNullOrEmpty(name) || x.Name.Contains(name)) && x.IsParent,
-                orderBy: x => x.OrderBy(f => f.ShowName)
+                orderBy: x => x.OrderByDescending(f => f.AuditCreateDate)
             );
 
             // Validamos que Items no sea nulo antes de mapear

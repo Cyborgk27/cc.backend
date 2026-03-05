@@ -49,7 +49,7 @@ public class DashboardService : IDashboardService
         var dashboardData = new ProjectDashboardDto(
             TotalProjects: projects.Count(),
             ActiveProjects: projects.Count(p => p.IsActive),
-            TotalApiKeys: projects.Sum(p => p.ApiKeys.Count),
+            TotalApiKeys: projects.Sum(p => p.ApiKeys.Count(a => a.IsDeleted == false)),
             TotalAssignedCatalogs: projects.Sum(p => p.ProjectCatalogs.Count),
             CatalogsPerProject: catalogsUsage,
             RecentActivity: recentActivity

@@ -119,11 +119,36 @@ namespace CC.Application.Services
         // --- GESTIÓN DE FEATURES ---
         public async Task<BaseResponse<int>> CreateFeatureAsync(FeatureDto request)
         {
-            var feature = new Feature(request.Name, request.ShowName, request.Path, request.Icon);
-            await _unitOfWork.Features.AddAsync(feature);
-            await _unitOfWork.SaveChangesAsync();
-            return _serviceData.CreateResponse(feature.Id, "Módulo creado.");
+            //var feature = new Feature(request.Name, request.ShowName, request.Path, request.Icon);
+            //await _unitOfWork.Features.AddAsync(feature);
+            //await _unitOfWork.SaveChangesAsync();
+            //return _serviceData.CreateResponse(feature.Id, "Módulo creado.");
+
+            if (request.Id.HasValue)
+            {
+                var existingFeature = await _unitOfWork.Features.GetAsync(f => f.Id == request.Id.Value && !f.IsDeleted);
+                if (!existingFeature.Any())
+                    throw new DomainException("FEATURE_EXISTS", "Error", "Ya existe un módulo con el ID especificado.");
+
+                var featureToUpdate = existingFeature.First();
+                featureToUpdate.UpdateDetails(request.ShowName, request.Path, request.Icon);
+
+            }
+            else
+            {
+                var nameUpper = request.Name.ToUpper().Trim();
+                var exists = await _unitOfWork.Features.GetAsync(f => f.Name == nameUpper && !f.IsDeleted);
+                if (exists.Any())
+                    throw new DomainException("FEATURE_EXISTS", "Error", "Ya existe un módulo con el nombre especificado.");
+                var newFeature = new Feature(nameUpper, request.ShowName, request.Path, request.Icon);
+                await _unitOfWork.Features.AddAsync(newFeature);
+                await _unitOfWork.SaveChangesAsync();
+                return _serviceData.CreateResponse(newFeature.Id, "Módulo creado correctamente.");
+            }
+
+            return _serviceData.CreateResponse(request.Id.Value, "Módulo actualizado correctamente.");
         }
+
         public async Task<BaseResponse<int>> CreatePermissionAsync(PermissionDto request) 
         {
             var featureExists = await _unitOfWork.Features.AnyAsync(f => f.Id == request.FeatureId && !f.IsDeleted);
