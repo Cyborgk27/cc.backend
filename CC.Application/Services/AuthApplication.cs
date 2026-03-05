@@ -142,10 +142,17 @@ namespace CC.Application.Services
                 newUser.FirstName
             );
 
-            if (!response)
-            {
-                throw new Exception("Se ha generador un error al enviar el email");
-            }
+            _ = Task.Run(async () => {
+                try
+                {
+                    await _emailService.SendConfirmationEmailAsync(newUser.Email, newUser.FirstName);
+                }
+                catch (Exception ex)
+                {
+                    // Loguear el error, pero el usuario ya está registrado
+                    Console.WriteLine($"Error enviando email: {ex.Message}");
+                }
+            });
 
             return _serviceData.CreateResponse(
                 newUser.Id,
