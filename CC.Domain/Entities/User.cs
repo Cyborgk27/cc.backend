@@ -47,7 +47,7 @@ namespace CC.Domain.Entities
         #region Reglas de Negocio
         public void Activate()
         {
-            if (IsDeleted)
+            if (!IsDeleted)
                 throw new DomainException("USER_ALREADY_ACTIVE", "El usuario ya está activo.");
 
             // Aquí podrías validar que el email esté confirmado si fuera requisito

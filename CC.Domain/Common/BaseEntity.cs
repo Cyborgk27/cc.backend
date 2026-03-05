@@ -9,7 +9,7 @@
         public DateTime? AuditUpdateDate { get; protected set; }
         public Guid? AuditDeleteUser { get; protected set; }
         public DateTime? AuditDeleteDate { get; protected set; }
-        public bool IsDeleted { get; protected set; }
+        public bool IsDeleted { get; protected set; } = false;
 
         #region Reglas de negocio comunes
         public void MarkAsDeleted(Guid userId)
@@ -29,7 +29,7 @@
         {
             AuditCreateUser = userId;
             AuditCreateDate = DateTime.UtcNow;
-            IsDeleted = false;
+            //IsDeleted = false;
         }
         #endregion
     }
