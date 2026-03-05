@@ -58,5 +58,13 @@ namespace CC.Api.Controllers
             var response = await _userApp.ActivateUserAsync(userId);
             return StatusCode(response.StatusCode, response);
         }
+
+        [HttpPatch("deactivate/{userId:guid}")]
+        [Permission("USERS", "UPDATE")]
+        public async Task<IActionResult> DeactivateUser(Guid userId)
+        {
+            var response = await _userApp.DeactivateUserAsync(userId);
+            return StatusCode(response.StatusCode, response);
+        }
     }
 }

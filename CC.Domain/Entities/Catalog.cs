@@ -42,7 +42,7 @@ namespace CC.Domain.Entities
 
         #region Métodos de Dominio
 
-        public void UpdateInfo(string showName, string abbreviation, string value, string? description = null)
+        public void UpdateInfo(string showName, string abbreviation, string value, int? parentId, string? description = null)
         {
             if (string.IsNullOrWhiteSpace(showName))
                 throw new DomainException("CATALOG_SHOWNAME_REQUIRED", "Nombre requerido", "El nombre visible no puede estar vacío.");
@@ -51,6 +51,7 @@ namespace CC.Domain.Entities
             Abbreviation = abbreviation.Trim();
             Value = value;
             Description = description;
+            ParentId = parentId;
         }
 
         public void AssignParent(Catalog parent)

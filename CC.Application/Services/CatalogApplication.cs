@@ -30,7 +30,7 @@ namespace CC.Application.Services
                 catalog = await _unitOfWork.Catalogs.GetByIdAsync(dto.Id.Value);
                 if (catalog == null) throw new EntityNotFoundException("Catalog", dto.Id.Value);
 
-                catalog.UpdateInfo(dto.ShowName, dto.Abbreviation, dto.Value, dto.Description);
+                catalog.UpdateInfo(dto.ShowName, dto.Abbreviation, dto.Value, dto.ParentId, dto.Description);
             }
             else
             {
@@ -59,7 +59,7 @@ namespace CC.Application.Services
                     {
                         // Lógica opcional para actualizar los datos del hijo existente
                         var existingChild = catalog.Children.FirstOrDefault(c => c.Id == childDto.Id);
-                        existingChild?.UpdateInfo(childDto.ShowName, childDto.Abbreviation, childDto.Value, childDto.Description);
+                        existingChild?.UpdateInfo(childDto.ShowName, childDto.Abbreviation, childDto.Value, childDto.ParentId, childDto.Description);
                     }
                 }
             }

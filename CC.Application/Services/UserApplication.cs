@@ -152,4 +152,30 @@ public class UserApplication : IUserApplication
             return _serviceData.CreateResponse(false, "Error interno al activar usuario.", 500);
         }
     }
+
+    public async Task<BaseResponse<bool>> DeactivateUserAsync(Guid userId)
+    {
+        var user = await _unitOfWork.Users.GetByIdAsync(userId);
+
+        if(user == null)
+        {
+            return _serviceData.CreateResponse(false, "Usuario no encontrado.", 404);
+        }
+
+        try
+        {
+            user.Deactivate();
+            await _unitOfWork.Users.UpdateAsync(user);
+            await _unitOfWork.SaveChangesAsync();
+            return _serviceData.CreateResponse(true, "Usuario desactivado exitosamente.");
+        }
+        catch (DomainException ex)
+        {
+            return _serviceData.CreateResponse(false, ex.Message, 400);
+        }
+        catch (Exception ex)
+        {
+            return _serviceData.CreateResponse(false, "Error interno al desactivar usuario.", 500);
+        }
+    }
 }

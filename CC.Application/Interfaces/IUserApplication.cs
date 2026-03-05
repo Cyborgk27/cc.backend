@@ -9,5 +9,6 @@ namespace CC.Application.Interfaces
         Task<BaseResponse<UserDto>> GetUserByIdAsync(Guid id);
         Task<BaseResponse<bool>> SaveUserAsync(UserDto dto);
         Task<BaseResponse<bool>> ActivateUserAsync(Guid userId);
+        Task<BaseResponse<bool>> DeactivateUserAsync(Guid userId);
     }
 }

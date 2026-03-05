@@ -26,7 +26,7 @@ public class DashboardService : IDashboardService
 
         // 1. Obtener proyectos con sus relaciones (API Keys y Catálogos asignados)
         var projects = await _unitOfWork.Projects.GetAsync(
-            filter: p => !p.AuditDeleteDate.HasValue,
+            filter: p => p.IsDeleted ==false,
             includeProperties: "ProjectCatalogs,ApiKeys"
         );
 
@@ -48,7 +48,7 @@ public class DashboardService : IDashboardService
         // 3. Crear el record de datos
         var dashboardData = new ProjectDashboardDto(
             TotalProjects: projects.Count(),
-            ActiveProjects: projects.Count(p => p.IsActive),
+            ActiveProjects: projects.Count(p => p.IsDeleted==false),
             TotalApiKeys: projects.Sum(p => p.ApiKeys.Count(a => a.IsDeleted == false)),
             TotalAssignedCatalogs: projects.Sum(p => p.ProjectCatalogs.Count),
             CatalogsPerProject: catalogsUsage,
