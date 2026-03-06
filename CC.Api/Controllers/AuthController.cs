@@ -37,6 +37,7 @@ namespace CC.Api.Controllers
         }
 
         [HttpPost("refresh-token")]
+        [AllowAnonymous]
         public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest request)
         {
             var response = await _authApplication.RefreshTokenAsync(request);

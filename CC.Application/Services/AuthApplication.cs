@@ -65,7 +65,7 @@ namespace CC.Application.Services
         {
             var user = (await _unitOfWork.Users.GetAsync(
                 filter: u => u.RefreshToken == request.RefreshToken && !u.IsDeleted,
-                includeProperties: "Role.RolePermissions.Permission"
+                includeProperties: "Role.RolePermissions.Permission.Feature"
             )).FirstOrDefault();
 
             if (user == null || !user.IsRefreshTokenValid(request.RefreshToken))
