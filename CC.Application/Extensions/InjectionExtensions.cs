@@ -20,6 +20,7 @@ namespace CC.Application.Extensions
             services.AddScoped<ICatalogApplication, CatalogApplication>();
             services.AddScoped<IUserApplication, UserApplication>();
             services.AddScoped<IDashboardService, DashboardService>();
+            services.AddScoped<ICommonApplication, CommonApplication>();
             return services;
         }
     }
