@@ -2,14 +2,14 @@
 using CC.Application.Common.Helpers;
 using CC.Application.DTOs.Project;
 using CC.Application.DTOs.Project.CC.Application.DTOs.Project;
-using CC.Application.Interfaces;
+using CC.Application.Modules.Projects.Interfaces;
 using CC.Domain.Entities;
 using CC.Domain.Exceptions;
 using CC.Domain.Repositories;
 using CC.Utilities.Static;
 using System.Linq;
 
-namespace CC.Application.Services
+namespace CC.Application.Modules.Projects.Services
 {
     public class ProjectApplication : IProjectApplication
     {
@@ -27,7 +27,7 @@ namespace CC.Application.Services
             var pagedResult = await _unitOfWork.Projects.GetPagedAsync(
                 page,
                 size,
-                filter: x => (string.IsNullOrEmpty(name) || x.Name.Contains(name)),
+                filter: x => string.IsNullOrEmpty(name) || x.Name.Contains(name),
                 orderBy: x => x.OrderBy(f => f.ShowName)
             );
 

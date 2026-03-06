@@ -1,7 +1,7 @@
 ﻿using CC.Application.Common.Bases;
 using CC.Application.DTOs.External;
 
-namespace CC.Application.Interfaces
+namespace CC.Application.Modules.Catalogs.Interfaces
 {
     public interface IExternalCatalogApplication
     {

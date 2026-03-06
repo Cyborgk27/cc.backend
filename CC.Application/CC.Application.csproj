@@ -18,4 +18,11 @@
     <ProjectReference Include="..\CC.Utilities\CC.Utilities.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Modules\Catalogs\Dtos\" />
+    <Folder Include="Modules\Features\Dtos\" />
+    <Folder Include="Modules\Identity\Dtos\" />
+    <Folder Include="Modules\Projects\Dtos\" />
+  </ItemGroup>
+
 </Project>

@@ -1,12 +1,12 @@
 ﻿using CC.Application.Common.Bases;
 using CC.Application.Common.Helpers;
 using CC.Application.DTOs.Security;
-using CC.Application.Interfaces;
+using CC.Application.Modules.Identity.Interfaces;
 using CC.Domain.Entities;
 using CC.Domain.Exceptions;
 using CC.Domain.Repositories;
 
-namespace CC.Application.Services
+namespace CC.Application.Modules.Identity.Services
 {
     public class SecurityApplication : ISecurityApplication
     {
@@ -39,7 +39,7 @@ namespace CC.Application.Services
 
                 var exists = await _unitOfWork.Roles.GetAsync(x => x.Name == nameUpper);
                 if (exists.Any())
-                    return _serviceData.CreateResponse<Guid>(Guid.Empty, "El nombre del rol ya existe.");
+                    return _serviceData.CreateResponse(Guid.Empty, "El nombre del rol ya existe.");
 
                 var newRole = new Role(nameUpper, request.ShowName, request.Description ?? string.Empty);
 

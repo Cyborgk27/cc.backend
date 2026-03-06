@@ -1,4 +1,4 @@
-﻿using CC.Application.Interfaces;
+﻿using CC.Application.Common.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

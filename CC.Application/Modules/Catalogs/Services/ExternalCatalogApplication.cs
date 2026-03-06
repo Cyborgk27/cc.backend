@@ -1,10 +1,10 @@
 ﻿using CC.Application.Common.Bases;
 using CC.Application.Common.Helpers;
 using CC.Application.DTOs.External;
-using CC.Application.Interfaces;
+using CC.Application.Modules.Catalogs.Interfaces;
 using CC.Domain.Repositories;
 
-namespace CC.Application.Services
+namespace CC.Application.Modules.Catalogs.Services
 {
     public class ExternalCatalogApplication : IExternalCatalogApplication
     {

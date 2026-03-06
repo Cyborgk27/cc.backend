@@ -1,11 +1,12 @@
 ﻿using CC.Application.Common.Bases;
 using CC.Application.Common.Helpers;
 using CC.Application.DTOs.Dashboard;
-using CC.Application.Interfaces;
+using CC.Application.Modules.Identity.Interfaces;
+using CC.Application.Modules.Projects.Interfaces;
 using CC.Domain.Repositories;
 using CC.Utilities.Static;
 
-namespace CC.Application.Services;
+namespace CC.Application.Modules.Projects.Services;
 
 public class DashboardService : IDashboardService
 {

@@ -1,4 +1,4 @@
-﻿namespace CC.Application.Interfaces
+﻿namespace CC.Application.Common.Interfaces
 {
     public interface IPasswordHasher
     {

@@ -1,4 +1,4 @@
-﻿using CC.Application.Interfaces;
+﻿using CC.Application.Modules.Identity.Interfaces;
 using Microsoft.AspNetCore.Http;
 
 namespace CC.Application.Services

@@ -1,14 +1,15 @@
 ﻿using CC.Application.Common.Bases;
 using CC.Application.Common.Helpers;
+using CC.Application.Common.Interfaces;
 using CC.Application.DTOs.Auth;
 using CC.Application.DTOs.User;
-using CC.Application.Interfaces;
+using CC.Application.Modules.Identity.Interfaces;
 using CC.Domain.Entities;
 using CC.Domain.Exceptions;
 using CC.Domain.Repositories;
 using CC.Utilities.Static;
 
-namespace CC.Application.Services
+namespace CC.Application.Modules.Identity.Services
 {
     public class AuthApplication : IAuthApplication
     {
@@ -36,7 +37,7 @@ namespace CC.Application.Services
         {
             var identifier = request.Email.ToLower().Trim();
             var user = (await _unitOfWork.Users.GetAsync(
-                filter: u => (u.UserName == identifier) && !u.IsDeleted,
+                filter: u => u.UserName == identifier && !u.IsDeleted,
                 includeProperties: "Role.RolePermissions.Permission.Feature"
             )).FirstOrDefault();
 

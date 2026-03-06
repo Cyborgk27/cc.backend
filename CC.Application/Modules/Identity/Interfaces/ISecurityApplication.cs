@@ -1,7 +1,7 @@
 ﻿using CC.Application.Common.Bases;
 using CC.Application.DTOs.Security;
 
-namespace CC.Application.Interfaces
+namespace CC.Application.Modules.Identity.Interfaces
 {
     public interface ISecurityApplication
     {

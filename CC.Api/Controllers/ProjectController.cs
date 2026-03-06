@@ -1,6 +1,6 @@
 ﻿using CC.Api.Middleware;
 using CC.Application.DTOs.Project.CC.Application.DTOs.Project;
-using CC.Application.Interfaces;
+using CC.Application.Modules.Projects.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

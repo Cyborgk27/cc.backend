@@ -1,7 +1,7 @@
 ﻿using CC.Application.Common.Bases;
 using CC.Application.DTOs.Features;
 
-namespace CC.Application.Interfaces
+namespace CC.Application.Modules.Features.Interfaces
 {
     public interface IFeatureApplication
     {

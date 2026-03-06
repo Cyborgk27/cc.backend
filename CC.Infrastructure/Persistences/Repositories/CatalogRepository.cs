@@ -1,4 +1,5 @@
-﻿using CC.Domain.Entities;
+﻿using CC.Application.Modules.Identity.Interfaces;
+using CC.Domain.Entities;
 using CC.Domain.Repositories;
 using CC.Infrastructure.Persistences.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,7 @@ namespace CC.Infrastructure.Persistences.Repositories
 {
     public class CatalogRepository : GenericRepository<Catalog, int>, ICatalogRepository
     {
-        public CatalogRepository(AppDbContext context, Application.Interfaces.IUserContext userContext) : base(context, userContext)
+        public CatalogRepository(AppDbContext context, IUserContext userContext) : base(context, userContext)
         {
         }
 

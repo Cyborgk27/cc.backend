@@ -1,5 +1,5 @@
 ﻿using CC.Application.DTOs.Features;
-using CC.Application.Interfaces;
+using CC.Application.Modules.Features.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

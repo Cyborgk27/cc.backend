@@ -1,7 +1,7 @@
 ﻿using CC.Application.Common.Bases;
 using CC.Application.DTOs.Project.CC.Application.DTOs.Project;
 
-namespace CC.Application.Interfaces
+namespace CC.Application.Modules.Projects.Interfaces
 {
     public interface IProjectApplication
     {

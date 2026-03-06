@@ -1,8 +1,8 @@
-﻿using CC.Application.DTOs.Common;
-using CC.Application.Interfaces;
+﻿using CC.Application.Common.Interfaces;
+using CC.Application.DTOs.Common;
 using CC.Domain.Repositories;
 
-namespace CC.Application.Services
+namespace CC.Application.Common.Services
 {
     public class CommonApplication : ICommonApplication
     {

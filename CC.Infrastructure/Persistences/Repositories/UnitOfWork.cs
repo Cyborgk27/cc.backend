@@ -1,4 +1,4 @@
-﻿using CC.Application.Interfaces;
+﻿using CC.Application.Modules.Identity.Interfaces;
 using CC.Domain.Repositories;
 using CC.Infrastructure.Persistences.Contexts;
 

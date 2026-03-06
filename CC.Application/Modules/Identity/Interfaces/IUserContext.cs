@@ -1,4 +1,4 @@
-﻿namespace CC.Application.Interfaces
+﻿namespace CC.Application.Modules.Identity.Interfaces
 {
     public interface IUserContext
     {

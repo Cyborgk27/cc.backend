@@ -1,8 +1,16 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using CC.Application.Common.Helpers;
-using CC.Application.Interfaces;
-using CC.Application.Services;
+using CC.Application.Modules.Identity.Interfaces;
+using CC.Application.Modules.Catalogs.Interfaces;
+using CC.Application.Modules.Projects.Interfaces;
+using CC.Application.Modules.Features.Interfaces;
+using CC.Application.Common.Interfaces;
+using CC.Application.Modules.Catalogs.Services;
+using CC.Application.Modules.Features.Services;
+using CC.Application.Modules.Identity.Services;
+using CC.Application.Modules.Projects.Services;
+using CC.Application.Common.Services;
 
 namespace CC.Application.Extensions
 {

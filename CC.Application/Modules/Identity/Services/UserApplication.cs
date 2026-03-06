@@ -1,7 +1,8 @@
 ﻿using CC.Application.Common.Bases;
 using CC.Application.Common.Helpers;
+using CC.Application.Common.Interfaces;
 using CC.Application.DTOs.User;
-using CC.Application.Interfaces;
+using CC.Application.Modules.Identity.Interfaces;
 using CC.Domain.Entities;
 using CC.Domain.Exceptions;
 using CC.Domain.Repositories;

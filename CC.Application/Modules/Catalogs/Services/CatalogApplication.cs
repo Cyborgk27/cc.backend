@@ -1,13 +1,13 @@
 ﻿using CC.Application.Common.Bases;
 using CC.Application.Common.Helpers;
 using CC.Application.DTOs.Catalog;
-using CC.Application.Interfaces;
+using CC.Application.Modules.Catalogs.Interfaces;
 using CC.Domain.Entities;
 using CC.Domain.Exceptions;
 using CC.Domain.Repositories;
 using CC.Utilities.Static;
 
-namespace CC.Application.Services
+namespace CC.Application.Modules.Catalogs.Services
 {
     public class CatalogApplication : ICatalogApplication
     {

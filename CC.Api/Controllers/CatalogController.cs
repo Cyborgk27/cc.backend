@@ -1,6 +1,6 @@
 ﻿using CC.Api.Middleware;
 using CC.Application.DTOs.Catalog;
-using CC.Application.Interfaces;
+using CC.Application.Modules.Catalogs.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

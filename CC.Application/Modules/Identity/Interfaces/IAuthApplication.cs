@@ -2,7 +2,7 @@
 using CC.Application.DTOs.Auth;
 using CC.Application.DTOs.User;
 
-namespace CC.Application.Interfaces
+namespace CC.Application.Modules.Identity.Interfaces
 {
     public interface IAuthApplication
     {

@@ -1,13 +1,13 @@
 ﻿using CC.Application.Common.Bases;
 using CC.Application.Common.Helpers;
 using CC.Application.DTOs.Features;
-using CC.Application.Interfaces;
+using CC.Application.Modules.Features.Interfaces;
 using CC.Domain.Entities;
 using CC.Domain.Exceptions;
 using CC.Domain.Repositories;
 using CC.Utilities.Static;
 
-namespace CC.Application.Services
+namespace CC.Application.Modules.Features.Services
 {
     public class FeatureApplication : IFeatureApplication
     {
