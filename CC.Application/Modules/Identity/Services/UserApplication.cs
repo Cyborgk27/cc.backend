@@ -1,7 +1,7 @@
 ﻿using CC.Application.Common.Bases;
 using CC.Application.Common.Helpers;
 using CC.Application.Common.Interfaces;
-using CC.Application.DTOs.User;
+using CC.Application.Modules.Identity.Dtos;
 using CC.Application.Modules.Identity.Interfaces;
 using CC.Domain.Entities;
 using CC.Domain.Exceptions;
@@ -23,7 +23,7 @@ public class UserApplication : IUserApplication
         _emailService = emailService;
     }
 
-    public async Task<BaseResponse<bool>> SaveUserAsync(UserDto dto)
+    public async Task<BaseResponse<bool>> SaveUserAsync(RegisterRequest dto)
     {
         User user;
 
@@ -83,17 +83,18 @@ public class UserApplication : IUserApplication
             includeProperties: "Role"
         );
 
-        var dtos = pagedResult.Items.Select(u => new UserDto(
-            u.Id,
-            u.UserName,
-            u.Email,
-            null, // Jamás devolvemos el hash
-            u.FirstName,
-            u.LastName,
-            u.RoleId,
-            u.Role?.ShowName,
-            u.IsDeleted
-        ));
+        var dtos = pagedResult.Items.Select(u => new UserDto
+        {
+            Id = u.Id,
+            UserName = u.UserName,
+            Email = u.Email,
+            Password = null, // Jamás devolvemos el hash
+            FirstName = u.FirstName,
+            LastName = u.LastName,
+            RoleId = u.RoleId,
+            RoleName = u.Role?.ShowName,
+            IsDeleted = u.IsDeleted
+        });
 
         return _serviceData.CreateResponse(dtos, ReplyMessage.MESSAGE_QUERY, 200, pagedResult.TotalCount);
     }
@@ -105,17 +106,18 @@ public class UserApplication : IUserApplication
 
         if (user == null || user.IsDeleted) throw new EntityNotFoundException("User", id);
 
-        var dto = new UserDto(
-            user.Id,
-            user.UserName,
-            user.Email,
-            null,
-            user.FirstName,
-            user.LastName,
-            user.RoleId,
-            user.Role?.Name,
-            user.IsDeleted
-        );
+        var dto = new UserDto
+        {
+            Id = user.Id,
+            UserName = user.UserName,
+            Email = user.Email,
+            Password = null,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            RoleId = user.RoleId,
+            RoleName = user.Role?.Name,
+            IsDeleted = user.IsDeleted
+        };
 
         return _serviceData.CreateResponse(dto, ReplyMessage.MESSAGE_QUERY);
     }

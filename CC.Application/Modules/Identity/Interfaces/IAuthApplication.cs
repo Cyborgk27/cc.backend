@@ -1,6 +1,5 @@
 ﻿using CC.Application.Common.Bases;
-using CC.Application.DTOs.Auth;
-using CC.Application.DTOs.User;
+using CC.Application.Modules.Identity.Dtos;
 
 namespace CC.Application.Modules.Identity.Interfaces
 {

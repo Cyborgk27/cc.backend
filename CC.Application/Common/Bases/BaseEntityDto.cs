@@ -1,6 +1,6 @@
 ﻿namespace CC.Application.Common.Bases
 {
-    public class BaseEntityDto<TKey>
+    public abstract class BaseEntityDto<TKey>
     {
         public TKey? Id { get; set; }
         public string AuditCreateUser { get; set; } = string.Empty;

@@ -1,13 +1,11 @@
 ﻿using CC.Application.Common.Bases;
 using CC.Application.Common.Helpers;
 using CC.Application.Common.Interfaces;
-using CC.Application.DTOs.Auth;
-using CC.Application.DTOs.User;
+using CC.Application.Modules.Identity.Dtos;
 using CC.Application.Modules.Identity.Interfaces;
 using CC.Domain.Entities;
 using CC.Domain.Exceptions;
 using CC.Domain.Repositories;
-using CC.Utilities.Static;
 
 namespace CC.Application.Modules.Identity.Services
 {
@@ -35,7 +33,7 @@ namespace CC.Application.Modules.Identity.Services
 
         public async Task<BaseResponse<AuthResponse>> LoginAsync(LoginRequest request)
         {
-            var identifier = request.Email.ToLower().Trim();
+            var identifier = request.Username.ToLower().Trim();
             var user = (await _unitOfWork.Users.GetAsync(
                 filter: u => u.UserName == identifier && !u.IsDeleted,
                 includeProperties: "Role.RolePermissions.Permission.Feature"
@@ -47,7 +45,7 @@ namespace CC.Application.Modules.Identity.Services
             _ = Task.Run(async () => {
                 try
                 {
-                    await _emailService.SendLoginNotificationEmailAsync(request.Email, user.UserName);
+                    await _emailService.SendLoginNotificationEmailAsync(request.Username, user.UserName);
                 }
                 catch (Exception ex)
                 {
@@ -89,12 +87,13 @@ namespace CC.Application.Modules.Identity.Services
                 .Select(rp => rp.Permission.Feature!)
                 .GroupBy(f => f.Id) // Evitamos duplicados si varios permisos apuntan a la misma Feature
                 .Select(g => g.First())
-                .Select(f => new NavigationDto(
-                    f.Name,      // Identificador técnico
-                    f.ShowName,  // Texto para el menú
-                    f.Path,      // Ruta de navegación (ej: /projects)
-                    f.Icon       // Icono para el UI (ej: pi pi-home)
-                ))
+                .Select(f => new NavigationDto
+                {
+                    Name = f.Name,
+                    ShowName = f.ShowName,
+                    Path = f.Path,
+                    Icon = f.Icon
+                })
                 .ToList();
 
             var rolesList = new List<string> { user.Role.ShowName };
@@ -115,16 +114,17 @@ namespace CC.Application.Modules.Identity.Services
             await _unitOfWork.SaveChangesAsync();
 
             // 5. Crear DTO de respuesta con la navegación incluida
-            var authResponse = new AuthResponse(
-                token,
-                newRefreshToken,
-                user.Email,
-                user.UserName,
-                user.ShowName, // Tu propiedad de perfil
-                rolesList,
-                permissions,
-                navigation    // <--- El menú dinámico de base de datos
-            );
+            var authResponse = new AuthResponse
+            {
+                Token = token,
+                RefreshToken = newRefreshToken,
+                Email = user.Email,
+                UserName = user.UserName,
+                FullName = $"{user.FirstName} {user.LastName}",
+                Roles = rolesList,
+                Permissions = permissions,
+                Navigation = navigation
+            };
 
             return _serviceData.CreateResponse(authResponse, "Sesión iniciada correctamente.");
         }

@@ -1,8 +1,6 @@
-﻿using CC.Application.DTOs.Auth;
-using CC.Application.DTOs.User;
+﻿using CC.Application.Modules.Identity.Dtos;
 using CC.Application.Modules.Identity.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CC.Api.Controllers

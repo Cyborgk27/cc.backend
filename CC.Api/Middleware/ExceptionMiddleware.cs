@@ -36,7 +36,7 @@ namespace CC.Api.Middleware
                     break;
                 default:
                     context.Response.StatusCode = 500;
-                    response.Message = "Error interno del servidor.";
+                    response.Message = exception.Message;
                     response.StatusCode = 500;
                     break;
             }
