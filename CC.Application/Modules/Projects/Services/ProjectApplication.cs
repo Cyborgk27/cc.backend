@@ -84,7 +84,7 @@ namespace CC.Application.Modules.Projects.Services
                 if (project == null) throw new EntityNotFoundException("Project", dto.Id.Value);
 
                 // SEGURIDAD: Solo el dueño o Admin editan
-                if (!_userContext.IsInRole("Admin") && project.AuditCreateUser != _userContext.UserId)
+                if (!_userContext.IsInRole("ADMINISTRATOR") && project.AuditCreateUser != _userContext.UserId)
                     throw new UnauthorizedAccessException("No tienes permiso para modificar este proyecto.");
 
                 project.UpdateInfo(dto.Name, dto.ShowName, dto.Description);

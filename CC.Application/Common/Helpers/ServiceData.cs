@@ -1,10 +1,7 @@
 ﻿using CC.Application.Common.Bases;
 using CC.Domain.Common;
 using CC.Utilities.Static;
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CC.Application.Common.Helpers
 {

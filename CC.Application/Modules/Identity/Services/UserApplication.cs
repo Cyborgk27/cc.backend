@@ -12,32 +12,40 @@ public class UserApplication : IUserApplication
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ServiceData _serviceData;
-    private readonly IPasswordHasher _hasher; // Tu servicio de hashing inyectado
-    private readonly IEmailService _emailService; // Para enviar correos
+    private readonly IPasswordHasher _hasher;
+    private readonly IEmailService _emailService;
+    private readonly IUserContext _userContext; // Inyectamos seguridad
 
-    public UserApplication(IUnitOfWork unitOfWork, ServiceData serviceData, IPasswordHasher hasher, IEmailService emailService)
+    public UserApplication(
+        IUnitOfWork unitOfWork,
+        ServiceData serviceData,
+        IPasswordHasher hasher,
+        IEmailService emailService,
+        IUserContext userContext)
     {
         _unitOfWork = unitOfWork;
         _serviceData = serviceData;
         _hasher = hasher;
         _emailService = emailService;
+        _userContext = userContext;
     }
 
     public async Task<BaseResponse<bool>> SaveUserAsync(RegisterRequest dto)
     {
+        // SEGURIDAD: Solo Admin puede crear o editar usuarios directamente
+        if (!_userContext.IsInRole("ADMINISTRATOR"))
+            throw new UnauthorizedAccessException("No tienes permiso para gestionar usuarios.");
+
         User user;
 
         if (dto.Id.HasValue && dto.Id != Guid.Empty)
         {
-            // --- MODO EDICIÓN ---
             user = await _unitOfWork.Users.GetByIdAsync(dto.Id.Value);
             if (user == null || user.IsDeleted) throw new EntityNotFoundException("User", dto.Id.Value);
 
-            // Actualizamos perfil y rol
-            user.UpdateProfile(dto.FirstName, dto.LastName, null); // PhoneNumber null por ahora
+            user.UpdateProfile(dto.FirstName, dto.LastName, null);
             user.AssignRole(dto.RoleId);
 
-            // Solo actualizamos password si el usuario envió uno nuevo
             if (!string.IsNullOrWhiteSpace(dto.Password))
             {
                 var newHash = _hasher.Hash(dto.Password);
@@ -47,9 +55,8 @@ public class UserApplication : IUserApplication
         }
         else
         {
-            // --- MODO CREACIÓN ---
             if (string.IsNullOrWhiteSpace(dto.Password))
-                throw new DomainException("PASSWORD_REQUIRED", "Contraseña requerida", "La contraseña es obligatoria para nuevos usuarios.");
+                throw new DomainException("PASSWORD_REQUIRED", "Contraseña requerida", "La contraseña es obligatoria.");
 
             var passwordHash = _hasher.Hash(dto.Password);
 
@@ -62,7 +69,6 @@ public class UserApplication : IUserApplication
                 dto.RoleId
             );
 
-
             await _unitOfWork.Users.AddAsync(user);
         }
 
@@ -72,13 +78,17 @@ public class UserApplication : IUserApplication
 
     public async Task<BaseResponse<IEnumerable<UserDto>>> GetPagedUsersAsync(int page, int size, string? search = null)
     {
+        // SEGURIDAD: Solo Admin puede listar usuarios
+        if (!_userContext.IsInRole("ADMINISTRATOR"))
+            throw new UnauthorizedAccessException("Acceso denegado a la lista de usuarios.");
+
         var pagedResult = await _unitOfWork.Users.GetPagedAsync(
             page,
             size,
             filter: x => (string.IsNullOrEmpty(search) ||
-                         x.Email.Contains(search) ||
-                         x.UserName.Contains(search) ||
-                         x.FirstName.Contains(search)),
+                         x.Email.Contains(search!) ||
+                         x.UserName.Contains(search!) ||
+                         x.FirstName.Contains(search!)),
             orderBy: x => x.OrderBy(f => f.AuditCreateDate),
             includeProperties: "Role"
         );
@@ -88,7 +98,7 @@ public class UserApplication : IUserApplication
             Id = u.Id,
             UserName = u.UserName,
             Email = u.Email,
-            Password = null, // Jamás devolvemos el hash
+            Password = null,
             FirstName = u.FirstName,
             LastName = u.LastName,
             RoleId = u.RoleId,
@@ -101,9 +111,11 @@ public class UserApplication : IUserApplication
 
     public async Task<BaseResponse<UserDto>> GetUserByIdAsync(Guid id)
     {
-        // Usamos el método que creamos en el repositorio para traer el Include(Role)
-        var user = await _unitOfWork.Users.GetUserWithRoleAsync(id);
+        // SEGURIDAD: Un usuario puede verse a sí mismo, o ser visto por un Admin
+        if (!_userContext.IsInRole("ADMINISTRATOR") && _userContext.UserId != id)
+            throw new UnauthorizedAccessException("No puedes consultar la información de otro usuario.");
 
+        var user = await _unitOfWork.Users.GetUserWithRoleAsync(id);
         if (user == null || user.IsDeleted) throw new EntityNotFoundException("User", id);
 
         var dto = new UserDto
@@ -124,20 +136,16 @@ public class UserApplication : IUserApplication
 
     public async Task<BaseResponse<bool>> ActivateUserAsync(Guid userId)
     {
-        // 1. Buscamos al usuario por su ID
-        var user = await _unitOfWork.Users.GetByIdAsync(userId);
+        // SEGURIDAD: Solo Admin
+        if (!_userContext.IsInRole("ADMINISTRATOR"))
+            throw new UnauthorizedAccessException("Solo un administrador puede aprobar cuentas.");
 
-        if (user == null)
-        {
-            return _serviceData.CreateResponse(false, "Usuario no encontrado.", 404);
-        }
+        var user = await _unitOfWork.Users.GetByIdAsync(userId);
+        if (user == null) return _serviceData.CreateResponse(false, "Usuario no encontrado.", 404);
 
         try
         {
-            // 2. Ejecutamos la regla de negocio definida en la Entidad de Dominio
             user.Activate();
-
-            // 3. Actualizamos y guardamos
             await _unitOfWork.Users.UpdateAsync(user);
             await _unitOfWork.SaveChangesAsync();
 
@@ -147,23 +155,22 @@ public class UserApplication : IUserApplication
         }
         catch (DomainException ex)
         {
-            // Capturamos si la entidad lanza una excepción (ej: ya estaba activo)
             return _serviceData.CreateResponse(false, ex.Message, 400);
-        }
-        catch (Exception ex)
-        {
-            return _serviceData.CreateResponse(false, "Error interno al activar usuario.", 500);
         }
     }
 
     public async Task<BaseResponse<bool>> DeactivateUserAsync(Guid userId)
     {
-        var user = await _unitOfWork.Users.GetByIdAsync(userId);
+        // SEGURIDAD: Solo Admin
+        if (!_userContext.IsInRole("ADMINISTRATOR"))
+            throw new UnauthorizedAccessException("Solo un administrador puede desactivar cuentas.");
 
-        if(user == null)
-        {
-            return _serviceData.CreateResponse(false, "Usuario no encontrado.", 404);
-        }
+        var user = await _unitOfWork.Users.GetUserWithRoleAsync(userId);
+
+        if (user == null) return _serviceData.CreateResponse(false, "Usuario no encontrado.", 404);
+
+        if(user.Role != null && user.Role.Name == "ADMINISTRATOR")
+            return _serviceData.CreateResponse(false, "No se puede desactivar un usuario con rol de administrador.", 403);
 
         try
         {
@@ -175,10 +182,6 @@ public class UserApplication : IUserApplication
         catch (DomainException ex)
         {
             return _serviceData.CreateResponse(false, ex.Message, 400);
-        }
-        catch (Exception ex)
-        {
-            return _serviceData.CreateResponse(false, "Error interno al desactivar usuario.", 500);
         }
     }
 }
