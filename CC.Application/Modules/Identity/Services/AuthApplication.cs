@@ -96,7 +96,7 @@ namespace CC.Application.Modules.Identity.Services
                 })
                 .ToList();
 
-            var rolesList = new List<string> { user.Role.ShowName };
+            var rolesList = new List<string> { user.Role.Name };
 
             // 3. Generar JWT
             var token = _jwtGenerator.GenerateToken(

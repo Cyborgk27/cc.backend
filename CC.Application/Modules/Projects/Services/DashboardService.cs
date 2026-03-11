@@ -12,7 +12,7 @@ public class DashboardService : IDashboardService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserContext _userContext;
-    private readonly ServiceData _serviceData; // Inyectamos tu Helper
+    private readonly ServiceData _serviceData;
 
     public DashboardService(IUnitOfWork unitOfWork, IUserContext userContext, ServiceData serviceData)
     {
@@ -23,15 +23,16 @@ public class DashboardService : IDashboardService
 
     public async Task<BaseResponse<ProjectDashboardDto>> GetUserDashboardAsync()
     {
+        // 1. Lógica de filtrado: Si es Admin ve todo, si no, solo lo suyo
+        var isAdmin = _userContext.IsInRole("Admin");
         var currentUserId = _userContext.UserId;
 
-        // 1. Obtener proyectos con sus relaciones (API Keys y Catálogos asignados)
         var projects = await _unitOfWork.Projects.GetAsync(
-            filter: p => p.IsDeleted ==false,
+            filter: p => !p.IsDeleted && (isAdmin || p.AuditCreateUser == currentUserId),
             includeProperties: "ProjectCatalogs,ApiKeys"
         );
 
-        // 2. Preparar los listados para el Record
+        // 2. Preparar los listados para el DTO
         var catalogsUsage = projects.Select(p => new CatalogUsageDto(
             p.ShowName,
             p.ProjectCatalogs.Count
@@ -46,17 +47,17 @@ public class DashboardService : IDashboardService
                 p.AuditUpdateDate ?? p.AuditCreateDate
             )).ToList();
 
-        // 3. Crear el record de datos
+        // 3. Cálculo de métricas basadas en la lista filtrada
         var dashboardData = new ProjectDashboardDto(
             TotalProjects: projects.Count(),
-            ActiveProjects: projects.Count(p => p.IsDeleted==false),
-            TotalApiKeys: projects.Sum(p => p.ApiKeys.Count(a => a.IsDeleted == false)),
+            ActiveProjects: projects.Count(p => !p.IsDeleted), // Ya filtrados, pero mantenemos lógica
+            TotalApiKeys: projects.Sum(p => p.ApiKeys.Count(a => !a.IsDeleted)),
             TotalAssignedCatalogs: projects.Sum(p => p.ProjectCatalogs.Count),
             CatalogsPerProject: catalogsUsage,
             RecentActivity: recentActivity
         );
 
-        // 4. USAR SERVICEDATA: Esto llena automáticamente IsSuccess, StatusCodeCat y el Count
+        // 4. Retorno usando tu Helper ServiceData
         return _serviceData.CreateResponse(
             data: dashboardData,
             message: ReplyMessage.MESSAGE_QUERY,
