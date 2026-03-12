@@ -1,7 +1,8 @@
 ﻿using CC.Domain.Common;
+using CC.Domain.Entities.Project;
 using CC.Domain.Exceptions;
 
-namespace CC.Domain.Entities
+namespace CC.Domain.Entities.Catalogs
 {
     public class Catalog : BaseEntity<int>
     {
@@ -45,7 +46,7 @@ namespace CC.Domain.Entities
         public void UpdateInfo(string showName, string abbreviation, string value, int? parentId, string? description = null)
         {
             if (string.IsNullOrWhiteSpace(showName))
-                throw new DomainException("CATALOG_SHOWNAME_REQUIRED", "Nombre requerido", "El nombre visible no puede estar vacío.");
+                throw new UserFriendlyException("El nombre para mostrar del catálogo es obligatorio.");
 
             ShowName = showName.Trim();
             Abbreviation = abbreviation.Trim();
@@ -57,10 +58,10 @@ namespace CC.Domain.Entities
         public void AssignParent(Catalog parent)
         {
             if (parent == null)
-                throw new DomainException("PARENT_REQUIRED", "Padre requerido", "Debe proporcionar un catálogo válido para asignar como padre.");
+                throw new UserFriendlyException("El catálogo padre no puede ser nulo.");
 
-            if (parent.Id == this.Id && this.Id != 0)
-                throw new DomainException("CIRCULAR_REFERENCE", "Referencia circular", "Un catálogo no puede ser padre de sí mismo.");
+            if (parent.Id == Id && Id != 0)
+                throw new UserFriendlyException("Un catálogo no puede ser su propio padre.");
 
             Parent = parent;
             ParentId = parent.Id;
@@ -70,23 +71,23 @@ namespace CC.Domain.Entities
         public void AddChild(Catalog child)
         {
             if (child == null)
-                throw new DomainException("CHILD_REQUIRED", "Hijo requerido", "El catálogo hijo no puede ser nulo.");
+                throw new UserFriendlyException("El catálogo hijo no puede ser nulo.");
 
             child.AssignParent(this);
             Children.Add(child);
-            this.IsParent = true; // Si agrego un hijo, este nodo se confirma como padre
+            IsParent = true; // Si agrego un hijo, este nodo se confirma como padre
         }
 
         private void Validate(string name, string showName, string value)
         {
             if (string.IsNullOrWhiteSpace(name))
-                throw new DomainException("CATALOG_NAME_REQUIRED", "Código requerido", "El nombre técnico (Name) es obligatorio.");
+                throw new UserFriendlyException("El nombre del catálogo es obligatorio.");
 
             if (string.IsNullOrWhiteSpace(showName))
-                throw new DomainException("CATALOG_SHOWNAME_REQUIRED", "Nombre visible requerido", "El nombre para mostrar es obligatorio.");
+                throw new UserFriendlyException("El nombre para mostrar del catálogo es obligatorio.");
 
             if (string.IsNullOrWhiteSpace(value))
-                throw new DomainException("CATALOG_VALUE_REQUIRED", "Valor requerido", "El valor del catálogo no puede estar vacío.");
+                throw new UserFriendlyException("El valor del catálogo es obligatorio.");
         }
 
         #endregion

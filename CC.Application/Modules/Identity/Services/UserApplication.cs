@@ -3,7 +3,7 @@ using CC.Application.Common.Helpers;
 using CC.Application.Common.Interfaces;
 using CC.Application.Modules.Identity.Dtos;
 using CC.Application.Modules.Identity.Interfaces;
-using CC.Domain.Entities;
+using CC.Domain.Entities.Identity;
 using CC.Domain.Exceptions;
 using CC.Domain.Repositories;
 using CC.Utilities.Static;
@@ -14,7 +14,7 @@ public class UserApplication : IUserApplication
     private readonly ServiceData _serviceData;
     private readonly IPasswordHasher _hasher;
     private readonly IEmailService _emailService;
-    private readonly IUserContext _userContext; // Inyectamos seguridad
+    private readonly IUserContext _userContext;
 
     public UserApplication(
         IUnitOfWork unitOfWork,
@@ -32,16 +32,17 @@ public class UserApplication : IUserApplication
 
     public async Task<BaseResponse<bool>> SaveUserAsync(RegisterRequest dto)
     {
-        // SEGURIDAD: Solo Admin puede crear o editar usuarios directamente
+        // SEGURIDAD: Solo Admin gestiona usuarios
         if (!_userContext.IsInRole("ADMINISTRATOR"))
-            throw new UnauthorizedAccessException("No tienes permiso para gestionar usuarios.");
+            throw new UserFriendlyException(ReplyMessage.MESSAGE_UNAUTHORIZED, 403);
 
         User user;
 
         if (dto.Id.HasValue && dto.Id != Guid.Empty)
         {
             user = await _unitOfWork.Users.GetByIdAsync(dto.Id.Value);
-            if (user == null || user.IsDeleted) throw new EntityNotFoundException("User", dto.Id.Value);
+            if (user == null || user.IsDeleted)
+                throw new UserFriendlyException(ReplyMessage.MESSAGE_NOT_FOUND, 404);
 
             user.UpdateProfile(dto.FirstName, dto.LastName, null);
             user.AssignRole(dto.RoleId);
@@ -56,7 +57,7 @@ public class UserApplication : IUserApplication
         else
         {
             if (string.IsNullOrWhiteSpace(dto.Password))
-                throw new DomainException("PASSWORD_REQUIRED", "Contraseña requerida", "La contraseña es obligatoria.");
+                throw new UserFriendlyException("La contraseña es obligatoria para nuevos registros.", 400);
 
             var passwordHash = _hasher.Hash(dto.Password);
 
@@ -78,9 +79,8 @@ public class UserApplication : IUserApplication
 
     public async Task<BaseResponse<IEnumerable<UserDto>>> GetPagedUsersAsync(int page, int size, string? search = null)
     {
-        // SEGURIDAD: Solo Admin puede listar usuarios
         if (!_userContext.IsInRole("ADMINISTRATOR"))
-            throw new UnauthorizedAccessException("Acceso denegado a la lista de usuarios.");
+            throw new UserFriendlyException(ReplyMessage.MESSAGE_FORBIDDEN, 403);
 
         var pagedResult = await _unitOfWork.Users.GetPagedAsync(
             page,
@@ -111,19 +111,18 @@ public class UserApplication : IUserApplication
 
     public async Task<BaseResponse<UserDto>> GetUserByIdAsync(Guid id)
     {
-        // SEGURIDAD: Un usuario puede verse a sí mismo, o ser visto por un Admin
         if (!_userContext.IsInRole("ADMINISTRATOR") && _userContext.UserId != id)
-            throw new UnauthorizedAccessException("No puedes consultar la información de otro usuario.");
+            throw new UserFriendlyException(ReplyMessage.MESSAGE_UNAUTHORIZED, 403);
 
         var user = await _unitOfWork.Users.GetUserWithRoleAsync(id);
-        if (user == null || user.IsDeleted) throw new EntityNotFoundException("User", id);
+        if (user == null || user.IsDeleted)
+            throw new UserFriendlyException(ReplyMessage.MESSAGE_NOT_FOUND, 404);
 
         var dto = new UserDto
         {
             Id = user.Id,
             UserName = user.UserName,
             Email = user.Email,
-            Password = null,
             FirstName = user.FirstName,
             LastName = user.LastName,
             RoleId = user.RoleId,
@@ -136,52 +135,37 @@ public class UserApplication : IUserApplication
 
     public async Task<BaseResponse<bool>> ActivateUserAsync(Guid userId)
     {
-        // SEGURIDAD: Solo Admin
         if (!_userContext.IsInRole("ADMINISTRATOR"))
-            throw new UnauthorizedAccessException("Solo un administrador puede aprobar cuentas.");
+            throw new UserFriendlyException(ReplyMessage.MESSAGE_UNAUTHORIZED, 403);
 
         var user = await _unitOfWork.Users.GetByIdAsync(userId);
-        if (user == null) return _serviceData.CreateResponse(false, "Usuario no encontrado.", 404);
+        if (user == null)
+            throw new UserFriendlyException(ReplyMessage.MESSAGE_NOT_FOUND, 404);
 
-        try
-        {
-            user.Activate();
-            await _unitOfWork.Users.UpdateAsync(user);
-            await _unitOfWork.SaveChangesAsync();
+        user.Activate();
+        await _unitOfWork.SaveChangesAsync();
 
-            await _emailService.SendNotificationActiveAccount(user.Email, user.UserName);
+        await _emailService.SendNotificationActiveAccount(user.Email, user.UserName);
 
-            return _serviceData.CreateResponse(true, "Usuario activado y aprobado exitosamente.");
-        }
-        catch (DomainException ex)
-        {
-            return _serviceData.CreateResponse(false, ex.Message, 400);
-        }
+        return _serviceData.CreateResponse(true, ReplyMessage.MESSAGE_ACTIVATE);
     }
 
     public async Task<BaseResponse<bool>> DeactivateUserAsync(Guid userId)
     {
-        // SEGURIDAD: Solo Admin
         if (!_userContext.IsInRole("ADMINISTRATOR"))
-            throw new UnauthorizedAccessException("Solo un administrador puede desactivar cuentas.");
+            throw new UserFriendlyException(ReplyMessage.MESSAGE_UNAUTHORIZED, 403);
 
         var user = await _unitOfWork.Users.GetUserWithRoleAsync(userId);
 
-        if (user == null) return _serviceData.CreateResponse(false, "Usuario no encontrado.", 404);
+        if (user == null)
+            throw new UserFriendlyException(ReplyMessage.MESSAGE_NOT_FOUND, 404);
 
-        if(user.Role != null && user.Role.Name == "ADMINISTRATOR")
-            return _serviceData.CreateResponse(false, "No se puede desactivar un usuario con rol de administrador.", 403);
+        if (user.Role?.Name == "ADMINISTRATOR")
+            throw new UserFriendlyException("No se puede desactivar usuarios con rol de administrador", 403);
 
-        try
-        {
-            user.Deactivate();
-            await _unitOfWork.Users.UpdateAsync(user);
-            await _unitOfWork.SaveChangesAsync();
-            return _serviceData.CreateResponse(true, "Usuario desactivado exitosamente.");
-        }
-        catch (DomainException ex)
-        {
-            return _serviceData.CreateResponse(false, ex.Message, 400);
-        }
+        user.Deactivate();
+        await _unitOfWork.SaveChangesAsync();
+
+        return _serviceData.CreateResponse(true, "Usuario desactivado correctamente.");
     }
 }

@@ -3,9 +3,10 @@ using CC.Application.Common.Helpers;
 using CC.Application.Common.Interfaces;
 using CC.Application.Modules.Identity.Dtos;
 using CC.Application.Modules.Identity.Interfaces;
-using CC.Domain.Entities;
+using CC.Domain.Entities.Identity;
 using CC.Domain.Exceptions;
 using CC.Domain.Repositories;
+using CC.Utilities.Static;
 
 namespace CC.Application.Modules.Identity.Services
 {
@@ -40,7 +41,7 @@ namespace CC.Application.Modules.Identity.Services
             )).FirstOrDefault();
 
             if (user == null || !_hasher.Verify(request.Password, user.PasswordHash))
-                throw new DomainException("AUTH_FAILED", "Credenciales Inválidas", "Usuario o contraseña incorrectos.");
+                throw new UserFriendlyException(ReplyMessage.MESSAGE_AUTH_FAILED, 401);
 
             _ = Task.Run(async () => {
                 try
@@ -49,8 +50,7 @@ namespace CC.Application.Modules.Identity.Services
                 }
                 catch (Exception ex)
                 {
-                    // Loguear error de email sin afectar al usuario
-                    Console.WriteLine($"Error notificación login: {ex.Message}");
+                    throw new UserFriendlyException($"Error enviando email de notificación: {ex.Message}");
                 }
             });
 
@@ -68,7 +68,7 @@ namespace CC.Application.Modules.Identity.Services
             )).FirstOrDefault();
 
             if (user == null || !user.IsRefreshTokenValid(request.RefreshToken))
-                throw new DomainException("INVALID_TOKEN", "Sesión Expirada", "Sesión inválida o expirada.");
+                throw new UserFriendlyException(ReplyMessage.MESSAGE_TOKEN_EXPIRED);
 
             return await GenerateAuthResponse(user);
         }
@@ -180,7 +180,7 @@ namespace CC.Application.Modules.Identity.Services
             )).FirstOrDefault();
 
             if (user == null)
-                throw new DomainException("USER_NOT_FOUND", "Usuario no encontrado", "El correo proporcionado no pertenece a ningún usuario activo.");
+                throw new UserFriendlyException(ReplyMessage.MESSAGE_NOT_FOUND);
 
             // 2. Ejecutar la lógica de confirmación de la Entidad
             // Esto disparará la excepción si el token no coincide o ya fue confirmado

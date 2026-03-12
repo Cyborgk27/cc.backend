@@ -1,4 +1,5 @@
-﻿using CC.Domain.Entities;
+﻿using CC.Domain.Entities.Features;
+using CC.Domain.Entities.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace CC.Infrastructure.Persistences.Contexts;

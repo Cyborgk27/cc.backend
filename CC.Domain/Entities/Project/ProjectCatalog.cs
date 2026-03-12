@@ -1,6 +1,7 @@
 ﻿using CC.Domain.Common;
+using CC.Domain.Entities.Catalogs;
 
-namespace CC.Domain.Entities
+namespace CC.Domain.Entities.Project
 {
     public class ProjectCatalog : BaseEntity<int>
     {

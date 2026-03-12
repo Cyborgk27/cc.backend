@@ -1,5 +1,5 @@
 ﻿using CC.Application.Modules.Identity.Interfaces;
-using CC.Domain.Entities;
+using CC.Domain.Entities.Identity;
 using CC.Domain.Repositories;
 using CC.Infrastructure.Persistences.Contexts;
 

@@ -1,7 +1,7 @@
 ﻿using CC.Domain.Common;
 using CC.Domain.Exceptions;
 
-namespace CC.Domain.Entities
+namespace CC.Domain.Entities.Project
 {
     public class ProjectApiKey : BaseEntity<int>
     {
@@ -31,10 +31,10 @@ namespace CC.Domain.Entities
             string? allowedDomain = null)
         {
             if (string.IsNullOrWhiteSpace(title))
-                throw new DomainException("APIKEY_TITLE_REQUIRED", "Título requerido", "El título de la API Key es obligatorio.");
+                throw new UserFriendlyException("El título de la API Key es obligatorio.");
 
             if (!isIndefinite && (expirationDate == null || expirationDate <= DateTime.Now))
-                throw new DomainException("INVALID_EXPIRATION", "Fecha inválida", "Si la llave no es indefinida, debe tener una fecha de expiración futura.");
+                throw new UserFriendlyException("La fecha de expiración debe ser una fecha futura.");
 
             ProjectId = projectId;
             Title = title.Trim();

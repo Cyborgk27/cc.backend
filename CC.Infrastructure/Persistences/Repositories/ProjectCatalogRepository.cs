@@ -1,5 +1,6 @@
 ﻿using CC.Application.Modules.Identity.Interfaces;
-using CC.Domain.Entities;
+using CC.Domain.Entities.Catalogs;
+using CC.Domain.Entities.Project;
 using CC.Domain.Repositories;
 using CC.Infrastructure.Persistences.Contexts;
 using Microsoft.EntityFrameworkCore;

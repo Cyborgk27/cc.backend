@@ -1,7 +1,8 @@
 ﻿using CC.Domain.Common;
+using CC.Domain.Entities.Identity;
 using CC.Domain.Exceptions;
 
-namespace CC.Domain.Entities
+namespace CC.Domain.Entities.Features
 {
     public class Feature : BaseEntity<int>
     {
@@ -31,7 +32,7 @@ namespace CC.Domain.Entities
         public void UpdateDetails(string showName, string path, string icon)
         {
             if (string.IsNullOrWhiteSpace(showName))
-                throw new DomainException("INVALID_SHOW_NAME", "Nombre visible requerido", "El nombre a mostrar no puede estar vacío.");
+                throw new UserFriendlyException("El nombre para mostrar del feature es obligatorio.");
 
             ValidatePath(path);
 
@@ -45,13 +46,10 @@ namespace CC.Domain.Entities
             // Regla: No duplicar nombres de permisos dentro del mismo feature
             if (AvailablePermissions.Any(p => p.Name == permName.ToUpper()))
             {
-                throw new DomainException(
-                    "DUPLICATE_PERMISSION",
-                    "Permiso duplicado",
-                    $"El permiso '{permName}' ya existe para el feature {this.Name}.");
+                throw new UserFriendlyException($"El permiso '{permName}' ya existe para este feature.");
             }
 
-            AvailablePermissions.Add(new Permission(permName, permShowName, this.Id));
+            AvailablePermissions.Add(new Permission(permName, permShowName, Id));
         }
 
         #endregion
@@ -60,19 +58,16 @@ namespace CC.Domain.Entities
         private void ValidateName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
-                throw new DomainException("EMPTY_NAME", "Nombre requerido", "El Name técnico de la funcionalidad es obligatorio.");
+                throw new UserFriendlyException("El nombre técnico del feature es obligatorio.");
 
             if (name.Length < 3)
-                throw new DomainException("NAME_TOO_SHORT", "Nombre muy corto", "El nombre técnico debe tener al menos 3 caracteres.");
+                throw new UserFriendlyException("El nombre técnico del feature debe tener al menos 3 caracteres.");
         }
 
         private void ValidatePath(string path)
         {
             if (string.IsNullOrWhiteSpace(path) || !path.StartsWith("/"))
-                throw new DomainException(
-                    "INVALID_PATH",
-                    "Ruta inválida",
-                    "El path debe comenzar con '/' y no puede estar vacío.");
+                throw new UserFriendlyException("La ruta del feature debe comenzar con '/'.");
         }
         #endregion
     }

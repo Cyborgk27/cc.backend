@@ -3,7 +3,7 @@ using CC.Application.Common.Helpers;
 using CC.Application.DTOs.Project.CC.Application.DTOs.Project;
 using CC.Application.Modules.Identity.Interfaces; // Para IUserContext
 using CC.Application.Modules.Projects.Interfaces;
-using CC.Domain.Entities;
+using CC.Domain.Entities.Project;
 using CC.Domain.Exceptions;
 using CC.Domain.Repositories;
 using CC.Utilities.Static;
@@ -53,7 +53,7 @@ namespace CC.Application.Modules.Projects.Services
 
             // Validación de existencia
             if (project == null || project.IsDeleted)
-                throw new EntityNotFoundException("Project", id);
+                throw new UserFriendlyException(ReplyMessage.MESSAGE_NOT_FOUND, 404);
 
             // SEGURIDAD: Validar propiedad del registro
             if (!_userContext.IsInRole("ADMINISTRATOR") && project.AuditCreateUser != _userContext.UserId)
@@ -81,7 +81,7 @@ namespace CC.Application.Modules.Projects.Services
             if (dto.Id.HasValue && dto.Id != Guid.Empty)
             {
                 project = await _unitOfWork.Projects.GetProjectDetailsAsync(dto.Id.Value);
-                if (project == null) throw new EntityNotFoundException("Project", dto.Id.Value);
+                if (project == null) throw new UserFriendlyException(ReplyMessage.MESSAGE_NOT_FOUND, 404);
 
                 // SEGURIDAD: Solo el dueño o Admin editan
                 if (!_userContext.IsInRole("ADMINISTRATOR") && project.AuditCreateUser != _userContext.UserId)
@@ -164,7 +164,7 @@ namespace CC.Application.Modules.Projects.Services
             var project = await _unitOfWork.Projects.GetByIdAsync(id);
 
             if (project == null || project.IsDeleted)
-                throw new EntityNotFoundException("Project", id);
+                throw new UserFriendlyException(ReplyMessage.MESSAGE_NOT_FOUND, 404);
 
             // SEGURIDAD: Solo el dueño o Admin eliminan
             if (!_userContext.IsInRole("Admin") && project.AuditCreateUser != _userContext.UserId)
@@ -180,7 +180,7 @@ namespace CC.Application.Modules.Projects.Services
             var apiKey = await _unitOfWork.ProjectApiKeys.GetByIdAsync(apiKeyId);
 
             if (apiKey == null || apiKey.IsDeleted)
-                throw new EntityNotFoundException("ProjectApiKey", apiKeyId);
+                throw new UserFriendlyException(ReplyMessage.MESSAGE_NOT_FOUND, 404);
 
             // Opcional: Validar que la API Key pertenezca a un proyecto del usuario actual
             // (Esto se garantiza si el flujo de UI es correcto, pero puedes añadir la validación aquí)

@@ -1,7 +1,7 @@
 ﻿using CC.Domain.Common;
 using CC.Domain.Exceptions;
 
-namespace CC.Domain.Entities
+namespace CC.Domain.Entities.Identity
 {
     public class User : BaseEntity<Guid>
     {
@@ -29,8 +29,8 @@ namespace CC.Domain.Entities
 
         public User(string email, string userName, string firstName, string lastName, string passwordHash, Guid roleId)
         {
-            if (string.IsNullOrWhiteSpace(email)) throw new DomainException("EMAIL_REQUIRED", "Correo requerido");
-            if (string.IsNullOrWhiteSpace(userName)) throw new DomainException("USERNAME_REQUIRED", "Nombre de usuario requerido");
+            if (string.IsNullOrWhiteSpace(email)) throw new UserFriendlyException("El correo electrónico es obligatorio.");
+            if (string.IsNullOrWhiteSpace(userName)) throw new UserFriendlyException("El nombre de usuario es obligatorio.");
 
             Id = Guid.NewGuid();
             Email = email.ToLower().Trim();
@@ -48,7 +48,7 @@ namespace CC.Domain.Entities
         public void Activate()
         {
             if (!IsDeleted)
-                throw new DomainException("USER_ALREADY_ACTIVE", "El usuario ya está activo.");
+                throw new UserFriendlyException("El usuario ya está activo.");
 
             // Aquí podrías validar que el email esté confirmado si fuera requisito
             // if (!EmailConfirmed) throw new DomainException("EMAIL_NOT_CONFIRMED", "No se puede activar sin email confirmado.");
@@ -65,7 +65,7 @@ namespace CC.Domain.Entities
         public void UpdateProfile(string firstName, string lastName, string? phoneNumber)
         {
             if (string.IsNullOrWhiteSpace(firstName) || string.IsNullOrWhiteSpace(lastName))
-                throw new DomainException("NAME_REQUIRED", "Nombre y apellido requeridos");
+                throw new UserFriendlyException("El nombre y apellido son obligatorios.");
 
             FirstName = firstName.Trim();
             LastName = lastName.Trim();
@@ -80,10 +80,10 @@ namespace CC.Domain.Entities
         public void ConfirmEmail(string token)
         {
             if (EmailConfirmed)
-                throw new DomainException("EMAIL_ALREADY_CONFIRMED", "Correo ya confirmado");
+                throw new UserFriendlyException("El correo electrónico ya ha sido confirmado.");
 
             if (EmailConfirmationToken != token)
-                throw new DomainException("INVALID_CONFIRMATION_TOKEN", "Token inválido", "El token de confirmación no coincide.");
+                throw new UserFriendlyException("Token de confirmación inválido.");
 
             EmailConfirmed = true;
             EmailConfirmationToken = null; // Limpiamos el token una vez usado
@@ -92,7 +92,7 @@ namespace CC.Domain.Entities
         public void UpdateRefreshToken(string newToken, DateTime expiryTime)
         {
             if (string.IsNullOrWhiteSpace(newToken))
-                throw new DomainException("INVALID_REFRESH_TOKEN", "Token inválido");
+                throw new UserFriendlyException("El token de refresco no puede estar vacío.");
 
             RefreshToken = newToken;
             RefreshTokenExpiryTime = expiryTime;
@@ -112,7 +112,7 @@ namespace CC.Domain.Entities
         public void AssignRole(Guid newRoleId)
         {
             if (newRoleId == Guid.Empty)
-                throw new DomainException("INVALID_ROLE_ID", "Rol inválido");
+                throw new UserFriendlyException("El ID del rol no puede ser vacío.");
 
             RoleId = newRoleId;
         }

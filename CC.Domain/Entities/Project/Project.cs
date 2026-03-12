@@ -1,7 +1,7 @@
 ﻿using CC.Domain.Common;
 using CC.Domain.Exceptions;
 
-namespace CC.Domain.Entities
+namespace CC.Domain.Entities.Project
 {
     public class Project : BaseEntity<Guid>
     {
@@ -35,7 +35,8 @@ namespace CC.Domain.Entities
         public void UpdateInfo(string name, string showName, string description)
         {
             if (string.IsNullOrWhiteSpace(showName))
-                throw new DomainException("PROJECT_SHOWNAME_REQUIRED", "Nombre requerido", "El nombre visible del proyecto no puede estar vacío.");
+                throw new UserFriendlyException("El nombre para mostrar del proyecto es obligatorio.");
+
             Name = name.ToUpper().Trim();
             ShowName = showName.Trim();
             Description = description;
@@ -45,16 +46,16 @@ namespace CC.Domain.Entities
         {
             // Validamos que no se asigne el mismo catálogo dos veces
             if (_projectCatalogs.Any(pc => pc.CatalogId == catalogId))
-                throw new DomainException("CATALOG_ALREADY_ASSIGNED", "Catálogo duplicado", "Este catálogo ya está asignado al proyecto.");
+                throw new UserFriendlyException("El catálogo ya está asignado a este proyecto.");
 
-            _projectCatalogs.Add(new ProjectCatalog(this.Id, catalogId));
+            _projectCatalogs.Add(new ProjectCatalog(Id, catalogId));
         }
 
         public void RemoveCatalog(int catalogId)
         {
             var assignment = _projectCatalogs.FirstOrDefault(pc => pc.CatalogId == catalogId);
             if (assignment == null)
-                throw new DomainException("CATALOG_NOT_ASSIGNED", "No encontrado", "El catálogo que intenta remover no está asignado a este proyecto.");
+                throw new UserFriendlyException("El catálogo no está asignado a este proyecto.");
 
             _projectCatalogs.Remove(assignment);
         }
@@ -62,15 +63,15 @@ namespace CC.Domain.Entities
         private void Validate(string name, string showName)
         {
             if (string.IsNullOrWhiteSpace(name))
-                throw new DomainException("PROJECT_NAME_REQUIRED", "Código requerido", "El nombre técnico del proyecto es obligatorio.");
+                throw new UserFriendlyException("El nombre del proyecto es obligatorio.");
 
             if (string.IsNullOrWhiteSpace(showName))
-                throw new DomainException("PROJECT_SHOWNAME_REQUIRED", "Nombre requerido", "El nombre para mostrar del proyecto es obligatorio.");
+                throw new UserFriendlyException("El nombre para mostrar del proyecto es obligatorio.");
         }
 
         public void GenerateApiKey(string title, string description, DateTime? expiration, bool isIndefinite, string? ip = null, string? domain = null)
         {
-            var apiKey = new ProjectApiKey(this.Id, title, description, expiration, isIndefinite, ip, domain);
+            var apiKey = new ProjectApiKey(Id, title, description, expiration, isIndefinite, ip, domain);
             _apiKeys.Add(apiKey);
         }
 

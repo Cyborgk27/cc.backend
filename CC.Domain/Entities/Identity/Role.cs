@@ -1,7 +1,7 @@
 ﻿using CC.Domain.Common;
 using CC.Domain.Exceptions;
 
-namespace CC.Domain.Entities
+namespace CC.Domain.Entities.Identity
 {
     public class Role : BaseEntity<Guid>
     {
@@ -31,7 +31,7 @@ namespace CC.Domain.Entities
         public void UpdateDetails(string showName, string description)
         {
             if (string.IsNullOrWhiteSpace(showName))
-                throw new DomainException("INVALID_ROLE_SHOWNAME", "Nombre requerido", "El nombre visible del rol no puede estar vacío.");
+                throw new UserFriendlyException("El nombre para mostrar del rol es obligatorio.");
 
             ShowName = showName.Trim();
             Description = description;
@@ -40,7 +40,7 @@ namespace CC.Domain.Entities
         public void Disable()
         {
             if (Name == "ADMIN")
-                throw new DomainException("CANNOT_DISABLE_ADMIN", "Acción no permitida", "El rol de Administrador no puede ser desactivado.");
+                throw new UserFriendlyException("El rol 'ADMIN' no puede ser deshabilitado.");
 
             IsEnabled = false;
         }
@@ -48,10 +48,10 @@ namespace CC.Domain.Entities
         private void Validate(string name, string showName)
         {
             if (string.IsNullOrWhiteSpace(name))
-                throw new DomainException("ROLE_NAME_REQUIRED", "Código de rol requerido", "El nombre técnico del rol es obligatorio.");
+                throw new UserFriendlyException("El nombre técnico del rol es obligatorio.");
 
             if (string.IsNullOrWhiteSpace(showName))
-                throw new DomainException("ROLE_SHOWNAME_REQUIRED", "Nombre visible requerido", "El nombre para mostrar del rol es obligatorio.");
+                throw new UserFriendlyException("El nombre para mostrar del rol es obligatorio.");
         }
 
         #endregion

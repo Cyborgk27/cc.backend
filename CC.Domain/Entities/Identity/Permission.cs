@@ -1,7 +1,8 @@
 ﻿using CC.Domain.Common;
+using CC.Domain.Entities.Features;
 using CC.Domain.Exceptions;
 
-namespace CC.Domain.Entities
+namespace CC.Domain.Entities.Identity
 {
     public class Permission : BaseEntity<int>
     {
@@ -20,7 +21,7 @@ namespace CC.Domain.Entities
             ValidateShowName(showName);
 
             if (featureId <= 0)
-                throw new DomainException("INVALID_FEATURE_ID", "Feature Inválido", "El permiso debe estar asociado a un Feature existente.");
+                throw new UserFriendlyException("El ID del feature asociado es inválido.");
 
             Name = name.ToUpper().Trim();
             ShowName = showName.Trim();
@@ -47,17 +48,17 @@ namespace CC.Domain.Entities
         private void ValidateName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
-                throw new DomainException("PERMISSION_NAME_REQUIRED", "Código de permiso requerido", "El nombre técnico del permiso no puede estar vacío.");
+                throw new UserFriendlyException("El nombre técnico del permiso es obligatorio.");
 
             // Regla: No permitir espacios en el nombre técnico (estándar de Claims)
             if (name.Contains(" "))
-                throw new DomainException("INVALID_PERMISSION_FORMAT", "Formato de permiso inválido", "El nombre técnico no debe contener espacios (use guiones bajos).");
+                throw new UserFriendlyException("El nombre técnico del permiso no puede contener espacios. Use guiones bajos (_) o camelCase.");
         }
 
         private void ValidateShowName(string showName)
         {
             if (string.IsNullOrWhiteSpace(showName))
-                throw new DomainException("PERMISSION_SHOWNAME_REQUIRED", "Nombre de visualización requerido", "Debe indicar cómo se mostrará el permiso al usuario.");
+                throw new UserFriendlyException("El nombre para mostrar del permiso es obligatorio.");
         }
         #endregion
     }

@@ -3,6 +3,7 @@ using CC.Application.Common.Helpers;
 using CC.Application.DTOs.Features;
 using CC.Application.Modules.Features.Interfaces;
 using CC.Domain.Entities;
+using CC.Domain.Entities.Features;
 using CC.Domain.Exceptions;
 using CC.Domain.Repositories;
 using CC.Utilities.Static;
@@ -42,7 +43,7 @@ namespace CC.Application.Modules.Features.Services
             var feature = await _unitOfWork.Features.GetByIdAsync(id);
 
             if (feature == null || feature.IsDeleted)
-                throw new EntityNotFoundException("Feature", id);
+                throw new UserFriendlyException(ReplyMessage.MESSAGE_NOT_FOUND, 404);
 
             var dto = new FeatureDto(feature.Id, feature.Name, feature.ShowName, feature.Path, feature.Icon);
             return _serviceData.CreateResponse(dto);
@@ -63,7 +64,7 @@ namespace CC.Application.Modules.Features.Services
         {
             var feature = await _unitOfWork.Features.GetByIdAsync(request.Id);
 
-            if (feature == null) throw new EntityNotFoundException("Feature", request.Id);
+            if (feature == null) throw new UserFriendlyException(ReplyMessage.MESSAGE_NOT_FOUND, 404);
 
             // Usamos el método rico de la entidad que creamos antes
             feature.UpdateDetails(request.ShowName, request.Path, request.Icon);
@@ -78,7 +79,7 @@ namespace CC.Application.Modules.Features.Services
         {
             var feature = await _unitOfWork.Features.GetByIdAsync(id);
 
-            if (feature == null) throw new EntityNotFoundException("Feature", id);
+            if (feature == null) throw new UserFriendlyException(ReplyMessage.MESSAGE_NOT_FOUND, 404);
 
             await _unitOfWork.Features.DeleteAsync(feature);
             await _unitOfWork.SaveChangesAsync();

@@ -1,7 +1,7 @@
 ﻿using CC.Domain.Common;
 using CC.Domain.Exceptions;
 
-namespace CC.Domain.Entities
+namespace CC.Domain.Entities.Identity
 {
     public class RolePermission : BaseEntity<int>
     {
@@ -30,19 +30,13 @@ namespace CC.Domain.Entities
             // Regla: El ID del rol no puede ser vacío
             if (roleId == Guid.Empty)
             {
-                throw new DomainException(
-                    "INVALID_ROLE_ID",
-                    "Rol no válido",
-                    "No se puede asignar un permiso a un identificador de rol vacío.");
+                throw new UserFriendlyException("El ID del rol no puede ser vacío.");
             }
 
             // Regla: El ID del permiso debe ser válido
             if (permissionId <= 0)
             {
-                throw new DomainException(
-                    "INVALID_PERMISSION_ID",
-                    "Permiso no válido",
-                    "El identificador del permiso debe ser un número positivo válido.");
+                throw new UserFriendlyException("El ID del permiso debe ser un número positivo.");
             }
         }
 
@@ -53,7 +47,7 @@ namespace CC.Domain.Entities
         public void ChangePermission(int newPermissionId)
         {
             if (newPermissionId <= 0)
-                throw new DomainException("INVALID_PERMISSION_ID", "Permiso no válido", "El nuevo permiso debe ser válido.");
+                throw new UserFriendlyException("El ID del nuevo permiso debe ser un número positivo.");
 
             PermissionId = newPermissionId;
         }

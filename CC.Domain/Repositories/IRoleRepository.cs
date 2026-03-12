@@ -1,4 +1,4 @@
-﻿using CC.Domain.Entities;
+﻿using CC.Domain.Entities.Identity;
 
 namespace CC.Domain.Repositories
 {

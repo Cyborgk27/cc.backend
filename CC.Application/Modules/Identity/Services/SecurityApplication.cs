@@ -3,6 +3,8 @@ using CC.Application.Common.Helpers;
 using CC.Application.DTOs.Security;
 using CC.Application.Modules.Identity.Interfaces;
 using CC.Domain.Entities;
+using CC.Domain.Entities.Features;
+using CC.Domain.Entities.Identity;
 using CC.Domain.Exceptions;
 using CC.Domain.Repositories;
 
@@ -99,7 +101,7 @@ namespace CC.Application.Modules.Identity.Services
             )).FirstOrDefault();
 
             if (role == null)
-                throw new DomainException("ROLE_NOT_FOUND", "No encontrado", "El rol no existe.");
+                throw new UserFriendlyException("El rol especificado no existe.");
 
             // 1. Limpiamos las asignaciones actuales
             role.RolePermissions.Clear();
@@ -126,7 +128,7 @@ namespace CC.Application.Modules.Identity.Services
                 var featureToUpdate = features.FirstOrDefault();
 
                 if (featureToUpdate == null)
-                    throw new DomainException("FEATURE_NOT_FOUND", "Error", "No se encontró el módulo para actualizar.");
+                    throw new UserFriendlyException("El módulo especificado no existe.");
 
                 // 2. Aplicamos los cambios usando el método de tu Entidad
                 featureToUpdate.UpdateDetails(request.ShowName, request.Path, request.Icon);
@@ -144,7 +146,7 @@ namespace CC.Application.Modules.Identity.Services
                 var exists = await _unitOfWork.Features.GetAsync(f => f.Name == nameUpper && !f.IsDeleted);
 
                 if (exists.Any())
-                    throw new DomainException("FEATURE_EXISTS", "Error", "Ya existe un módulo con el nombre especificado.");
+                    throw new UserFriendlyException("El nombre del módulo ya existe.");
 
                 var newFeature = new Feature(nameUpper, request.ShowName, request.Path, request.Icon);
 
@@ -165,7 +167,7 @@ namespace CC.Application.Modules.Identity.Services
                 var existingPermission = await _unitOfWork.Permissions.GetByIdAsync(request.Id.Value);
 
                 if (existingPermission == null)
-                    throw new DomainException("NOT_FOUND", "No encontrado", $"El permiso con ID {request.Id} no existe.");
+                    throw new UserFriendlyException("El permiso especificado no existe.");
 
                 // Usamos el método Update de tu clase de dominio (esto valida las reglas de negocio)
                 existingPermission.Update(request.Name, request.ShowName);
@@ -218,7 +220,7 @@ namespace CC.Application.Modules.Identity.Services
             )).FirstOrDefault();
 
             if (role == null)
-                throw new DomainException("ROLE_NOT_FOUND", "No encontrado", "El rol solicitado no existe.");
+                throw new UserFriendlyException("El rol especificado no existe.");
 
             var dto = new RoleDto(
                 role.Id,

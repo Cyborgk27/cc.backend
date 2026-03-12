@@ -2,7 +2,7 @@
 using CC.Application.Common.Helpers;
 using CC.Application.DTOs.Catalog;
 using CC.Application.Modules.Catalogs.Interfaces;
-using CC.Domain.Entities;
+using CC.Domain.Entities.Catalogs;
 using CC.Domain.Exceptions;
 using CC.Domain.Repositories;
 using CC.Utilities.Static;
@@ -28,7 +28,7 @@ namespace CC.Application.Modules.Catalogs.Services
             if (dto.Id.HasValue && dto.Id > 0)
             {
                 catalog = await _unitOfWork.Catalogs.GetByIdAsync(dto.Id.Value);
-                if (catalog == null) throw new EntityNotFoundException("Catalog", dto.Id.Value);
+                if (catalog == null) throw new UserFriendlyException("Catálogo no encontrado.", 404);
 
                 catalog.UpdateInfo(dto.ShowName, dto.Abbreviation, dto.Value, dto.ParentId, dto.Description);
             }
@@ -92,7 +92,7 @@ namespace CC.Application.Modules.Catalogs.Services
         public async Task<BaseResponse<CatalogDto>> GetCatalogByIdAsync(int id)
         {
             var catalog = await _unitOfWork.Catalogs.GetCatalogDetailsAsync(id);
-            if (catalog == null) throw new EntityNotFoundException("Catalog", id);
+            if (catalog == null) throw new UserFriendlyException(ReplyMessage.MESSAGE_NOT_FOUND, 404);
             var dto = MapToDto(catalog, true);
             return _serviceData.CreateResponse(dto, ReplyMessage.MESSAGE_QUERY);
         }
@@ -100,7 +100,7 @@ namespace CC.Application.Modules.Catalogs.Services
         public async Task<BaseResponse<bool>> DeleteCatalogAsync(int id)
         {
             var catalog = await _unitOfWork.Catalogs.GetByIdAsync(id);
-            if (catalog == null) throw new EntityNotFoundException("Catalog", id);
+            if (catalog == null) throw new UserFriendlyException(ReplyMessage.MESSAGE_NOT_FOUND, 404);
             await _unitOfWork.Catalogs.DeleteAsync(catalog);
             await _unitOfWork.SaveChangesAsync();
             return _serviceData.CreateResponse(true, ReplyMessage.MESSAGE_DELETE);
