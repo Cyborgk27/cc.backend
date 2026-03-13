@@ -57,5 +57,13 @@ namespace CC.Api.Controllers
             var response = await _projectApp.DeleteApiKey(id);
             return StatusCode(response.StatusCode, response);
         }
+
+        [HttpGet("catalogs")]
+        [Permission("PROJECT", "READ")]
+        public async Task<IActionResult> GetAllPageCatalogs([FromQuery] int page = 1, [FromQuery] int size = 10, [FromQuery] string? name = null)
+        {
+            var response = await _projectApp.GetPagedCatalogsAsync(page, size, name);
+            return StatusCode(response.StatusCode, response);
+        }
     }
 }

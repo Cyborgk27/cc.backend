@@ -1,12 +1,16 @@
 ﻿using CC.Application.Common.Bases;
 using CC.Application.Common.Helpers;
+using CC.Application.DTOs.Catalog;
 using CC.Application.DTOs.Project.CC.Application.DTOs.Project;
 using CC.Application.Modules.Identity.Interfaces; // Para IUserContext
 using CC.Application.Modules.Projects.Interfaces;
+using CC.Domain.Entities.Catalogs;
 using CC.Domain.Entities.Project;
 using CC.Domain.Exceptions;
 using CC.Domain.Repositories;
 using CC.Utilities.Static;
+using System.Drawing;
+using System.Xml.Linq;
 
 namespace CC.Application.Modules.Projects.Services
 {
@@ -190,6 +194,47 @@ namespace CC.Application.Modules.Projects.Services
             await _unitOfWork.SaveChangesAsync();
 
             return _serviceData.CreateResponse(true, ReplyMessage.MESSAGE_DELETE);
+        }
+
+        public async Task<BaseResponse<IEnumerable<CatalogDto>>> GetPagedCatalogsAsync(int page, int size, string? name = null)
+        {
+            var pagedResult = await _unitOfWork.Catalogs.GetPagedAsync(
+                page,
+                size,
+                filter: x => (string.IsNullOrEmpty(name) || x.Name.Contains(name)) && x.IsParent,
+                orderBy: x => x.OrderByDescending(f => f.AuditCreateDate)
+            );
+
+            // Validamos que Items no sea nulo antes de mapear
+            if (pagedResult.Items == null)
+            {
+                return _serviceData.CreateResponse(Enumerable.Empty<CatalogDto>(), ReplyMessage.MESSAGE_QUERY, 200, 0);
+            }
+
+            // Mapeamos con seguridad
+            var dtos = pagedResult.Items.Select(x => MapToDto(x, false)).AsEnumerable();
+
+            return _serviceData.CreateResponse(dtos, ReplyMessage.MESSAGE_QUERY, 200, pagedResult.TotalCount);
+        }
+
+        private CatalogDto MapToDto(Catalog entity, bool includeChildren)
+        {
+            if (entity == null) return null!;
+
+            return new CatalogDto(
+                entity.Id,
+                entity.ParentId,
+                entity.Name,
+                entity.ShowName,
+                entity.Abbreviation,
+                entity.Value,
+                entity.Description,
+                entity.IsParent,
+                !entity.IsDeleted,
+                entity.IsDeleted,
+                // El ?. es la clave para que no de Error 500
+                includeChildren ? entity.Children?.Select(c => MapToDto(c, true)) : null
+            );
         }
     }
 }

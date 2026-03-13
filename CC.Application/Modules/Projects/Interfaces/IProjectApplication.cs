@@ -1,4 +1,5 @@
 ﻿using CC.Application.Common.Bases;
+using CC.Application.DTOs.Catalog;
 using CC.Application.DTOs.Project.CC.Application.DTOs.Project;
 
 namespace CC.Application.Modules.Projects.Interfaces
@@ -10,5 +11,6 @@ namespace CC.Application.Modules.Projects.Interfaces
         Task<BaseResponse<bool>> SaveProjectAsync(ProjectDto dto);
         Task<BaseResponse<bool>> DeleteProjectAsync(Guid id);
         Task<BaseResponse<bool>> DeleteApiKey(int apiKeyId);
+        Task<BaseResponse<IEnumerable<CatalogDto>>> GetPagedCatalogsAsync(int page, int size, string? name = null);
     }
 }
