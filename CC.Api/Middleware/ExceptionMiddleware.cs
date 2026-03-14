@@ -1,5 +1,6 @@
-﻿using CC.Application.Common.Bases;
+﻿using CC.Application.Common.Helpers;
 using CC.Domain.Exceptions;
+using System.Net;
 using System.Text.Json;
 
 namespace CC.Api.Middleware
@@ -10,39 +11,59 @@ namespace CC.Api.Middleware
 
         public ExceptionMiddleware(RequestDelegate next) => _next = next;
 
-        public async Task InvokeAsync(HttpContext context)
+        public async Task InvokeAsync(HttpContext context, ServiceData serviceData)
         {
-            try { await _next(context); }
-            catch (Exception ex) { await HandleExceptionAsync(context, ex); }
+            try
+            {
+                await _next(context);
+            }
+            catch (Exception ex)
+            {
+                await HandleExceptionAsync(context, ex, serviceData);
+            }
         }
 
-        private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+        private static Task HandleExceptionAsync(HttpContext context, Exception exception, ServiceData serviceData)
         {
             context.Response.ContentType = "application/json";
 
-            var response = new BaseResponse<object> { IsSuccess = false };
+            string message;
+            int statusCode;
 
-            switch (exception)
+            // Determinamos el mensaje y código según el tipo de excepción
+            if (exception is UserFriendlyException userEx)
             {
-                case EntityNotFoundException ex:
-                    context.Response.StatusCode = 404;
-                    response.Message = ex.Message;
-                    response.StatusCode = 404;
-                    break;
-                case DomainException ex:
-                    context.Response.StatusCode = 400;
-                    response.Message = ex.Message;
-                    response.StatusCode = 400;
-                    break;
-                default:
-                    context.Response.StatusCode = 500;
-                    response.Message = "Error interno del servidor.";
-                    response.StatusCode = 500;
-                    break;
+                statusCode = userEx.StatusCode;
+                message = userEx.Message;
+            }
+            else if (exception is UnauthorizedAccessException)
+            {
+                statusCode = (int)HttpStatusCode.Forbidden;
+                message = "No tienes permisos para realizar esta acción.";
+            }
+            else
+            {
+                statusCode = (int)HttpStatusCode.InternalServerError;
+                message = "Ocurrió un error inesperado en el servidor.";
+                // Opcional: Loggear exception.Message aquí
             }
 
-            response.StatusCodeCat = $"https://http.cat/{context.Response.StatusCode}";
-            var json = JsonSerializer.Serialize(response);
+            context.Response.StatusCode = statusCode;
+
+            // USAMOS TU SERVICEDATA PARA CREAR LA RESPUESTA
+            // Pasamos 'null' o 'false' como data ya que es una respuesta de error
+            var response = serviceData.CreateResponse<object?>(
+                data: null,
+                message: message,
+                statusCode: statusCode
+            );
+
+            // Aseguramos que IsSuccess sea false (aunque ServiceData lo calcula por el status)
+            response.IsSuccess = false;
+
+            var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            var json = JsonSerializer.Serialize(response, options);
+
             return context.Response.WriteAsync(json);
         }
     }

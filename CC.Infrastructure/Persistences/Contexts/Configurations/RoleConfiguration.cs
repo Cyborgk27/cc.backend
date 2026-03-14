@@ -1,4 +1,4 @@
-﻿using CC.Domain.Entities;
+﻿using CC.Domain.Entities.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

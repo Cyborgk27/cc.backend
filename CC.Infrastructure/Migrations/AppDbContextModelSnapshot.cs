@@ -22,7 +22,7 @@ namespace CC.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("CC.Domain.Entities.Catalog", b =>
+            modelBuilder.Entity("CC.Domain.Entities.Catalogs.Catalog", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -91,7 +91,7 @@ namespace CC.Infrastructure.Migrations
                     b.ToTable("Catalogs", (string)null);
                 });
 
-            modelBuilder.Entity("CC.Domain.Entities.Feature", b =>
+            modelBuilder.Entity("CC.Domain.Entities.Features.Feature", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -148,7 +148,7 @@ namespace CC.Infrastructure.Migrations
                     b.ToTable("Features", (string)null);
                 });
 
-            modelBuilder.Entity("CC.Domain.Entities.Permission", b =>
+            modelBuilder.Entity("CC.Domain.Entities.Identity.Permission", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -200,177 +200,7 @@ namespace CC.Infrastructure.Migrations
                     b.ToTable("Permissions", (string)null);
                 });
 
-            modelBuilder.Entity("CC.Domain.Entities.Project", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("AuditCreateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("AuditCreateUser")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("AuditDeleteDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("AuditDeleteUser")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("AuditUpdateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("AuditUpdateUser")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true);
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("ShowName")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("character varying(150)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Projects", (string)null);
-                });
-
-            modelBuilder.Entity("CC.Domain.Entities.ProjectApiKey", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AllowedDomain")
-                        .HasColumnType("text");
-
-                    b.Property<string>("AllowedIp")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("AuditCreateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("AuditCreateUser")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("AuditDeleteDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("AuditDeleteUser")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("AuditUpdateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("AuditUpdateUser")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("ExpirationDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsEnabled")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsIndefinite")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Key")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Key")
-                        .IsUnique();
-
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("ProjectApiKeys", (string)null);
-                });
-
-            modelBuilder.Entity("CC.Domain.Entities.ProjectCatalog", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("AuditCreateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("AuditCreateUser")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("AuditDeleteDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("AuditDeleteUser")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("AuditUpdateDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid?>("AuditUpdateUser")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("CatalogId")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid>("ProjectId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CatalogId");
-
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("ProjectCatalogs", (string)null);
-                });
-
-            modelBuilder.Entity("CC.Domain.Entities.Role", b =>
+            modelBuilder.Entity("CC.Domain.Entities.Identity.Role", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -422,7 +252,7 @@ namespace CC.Infrastructure.Migrations
                     b.ToTable("Roles");
                 });
 
-            modelBuilder.Entity("CC.Domain.Entities.RolePermission", b =>
+            modelBuilder.Entity("CC.Domain.Entities.Identity.RolePermission", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -467,7 +297,7 @@ namespace CC.Infrastructure.Migrations
                     b.ToTable("RolePermissions", (string)null);
                 });
 
-            modelBuilder.Entity("CC.Domain.Entities.User", b =>
+            modelBuilder.Entity("CC.Domain.Entities.Identity.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -554,9 +384,244 @@ namespace CC.Infrastructure.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("CC.Domain.Entities.Catalog", b =>
+            modelBuilder.Entity("CC.Domain.Entities.Project.Project", b =>
                 {
-                    b.HasOne("CC.Domain.Entities.Catalog", "Parent")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("AuditCreateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("AuditCreateUser")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("AuditDeleteDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("AuditDeleteUser")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("AuditUpdateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("AuditUpdateUser")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("ShowName")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Projects", (string)null);
+                });
+
+            modelBuilder.Entity("CC.Domain.Entities.Project.ProjectApiKey", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AllowedDomain")
+                        .HasColumnType("text");
+
+                    b.Property<string>("AllowedIp")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("AuditCreateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("AuditCreateUser")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("AuditDeleteDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("AuditDeleteUser")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("AuditUpdateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("AuditUpdateUser")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ExpirationDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsIndefinite")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Key")
+                        .IsUnique();
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("ProjectApiKeys", (string)null);
+                });
+
+            modelBuilder.Entity("CC.Domain.Entities.Project.ProjectCatalog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("AuditCreateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("AuditCreateUser")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("AuditDeleteDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("AuditDeleteUser")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("AuditUpdateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("AuditUpdateUser")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("CatalogId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CatalogId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("ProjectCatalogs", (string)null);
+                });
+
+            modelBuilder.Entity("CC.Domain.Entities.System.SystemAudit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Action")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("AuditCreateUser")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("AuditDeleteUser")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("AuditUpdateUser")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Endpoint")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ExecutionTime")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Module")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Operation")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RequestData")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ResponseCode")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UserEmail")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("UserIp")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("SystemAudits", (string)null);
+                });
+
+            modelBuilder.Entity("CC.Domain.Entities.Catalogs.Catalog", b =>
+                {
+                    b.HasOne("CC.Domain.Entities.Catalogs.Catalog", "Parent")
                         .WithMany("Children")
                         .HasForeignKey("ParentId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -564,9 +629,9 @@ namespace CC.Infrastructure.Migrations
                     b.Navigation("Parent");
                 });
 
-            modelBuilder.Entity("CC.Domain.Entities.Permission", b =>
+            modelBuilder.Entity("CC.Domain.Entities.Identity.Permission", b =>
                 {
-                    b.HasOne("CC.Domain.Entities.Feature", "Feature")
+                    b.HasOne("CC.Domain.Entities.Features.Feature", "Feature")
                         .WithMany("AvailablePermissions")
                         .HasForeignKey("FeatureId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -575,45 +640,15 @@ namespace CC.Infrastructure.Migrations
                     b.Navigation("Feature");
                 });
 
-            modelBuilder.Entity("CC.Domain.Entities.ProjectApiKey", b =>
+            modelBuilder.Entity("CC.Domain.Entities.Identity.RolePermission", b =>
                 {
-                    b.HasOne("CC.Domain.Entities.Project", "Project")
-                        .WithMany("ApiKeys")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Project");
-                });
-
-            modelBuilder.Entity("CC.Domain.Entities.ProjectCatalog", b =>
-                {
-                    b.HasOne("CC.Domain.Entities.Catalog", "Catalog")
-                        .WithMany("ProjectCatalogs")
-                        .HasForeignKey("CatalogId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CC.Domain.Entities.Project", "Project")
-                        .WithMany("ProjectCatalogs")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Catalog");
-
-                    b.Navigation("Project");
-                });
-
-            modelBuilder.Entity("CC.Domain.Entities.RolePermission", b =>
-                {
-                    b.HasOne("CC.Domain.Entities.Permission", "Permission")
+                    b.HasOne("CC.Domain.Entities.Identity.Permission", "Permission")
                         .WithMany()
                         .HasForeignKey("PermissionId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("CC.Domain.Entities.Role", "Role")
+                    b.HasOne("CC.Domain.Entities.Identity.Role", "Role")
                         .WithMany("RolePermissions")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -624,9 +659,9 @@ namespace CC.Infrastructure.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("CC.Domain.Entities.User", b =>
+            modelBuilder.Entity("CC.Domain.Entities.Identity.User", b =>
                 {
-                    b.HasOne("CC.Domain.Entities.Role", "Role")
+                    b.HasOne("CC.Domain.Entities.Identity.Role", "Role")
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -635,28 +670,58 @@ namespace CC.Infrastructure.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("CC.Domain.Entities.Catalog", b =>
+            modelBuilder.Entity("CC.Domain.Entities.Project.ProjectApiKey", b =>
+                {
+                    b.HasOne("CC.Domain.Entities.Project.Project", "Project")
+                        .WithMany("ApiKeys")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("CC.Domain.Entities.Project.ProjectCatalog", b =>
+                {
+                    b.HasOne("CC.Domain.Entities.Catalogs.Catalog", "Catalog")
+                        .WithMany("ProjectCatalogs")
+                        .HasForeignKey("CatalogId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CC.Domain.Entities.Project.Project", "Project")
+                        .WithMany("ProjectCatalogs")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Catalog");
+
+                    b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("CC.Domain.Entities.Catalogs.Catalog", b =>
                 {
                     b.Navigation("Children");
 
                     b.Navigation("ProjectCatalogs");
                 });
 
-            modelBuilder.Entity("CC.Domain.Entities.Feature", b =>
+            modelBuilder.Entity("CC.Domain.Entities.Features.Feature", b =>
                 {
                     b.Navigation("AvailablePermissions");
                 });
 
-            modelBuilder.Entity("CC.Domain.Entities.Project", b =>
+            modelBuilder.Entity("CC.Domain.Entities.Identity.Role", b =>
+                {
+                    b.Navigation("RolePermissions");
+                });
+
+            modelBuilder.Entity("CC.Domain.Entities.Project.Project", b =>
                 {
                     b.Navigation("ApiKeys");
 
                     b.Navigation("ProjectCatalogs");
-                });
-
-            modelBuilder.Entity("CC.Domain.Entities.Role", b =>
-                {
-                    b.Navigation("RolePermissions");
                 });
 #pragma warning restore 612, 618
         }

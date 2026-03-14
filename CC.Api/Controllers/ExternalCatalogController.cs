@@ -1,9 +1,9 @@
-﻿using CC.Application.Interfaces;
-using CC.Application.Common.Helpers;
+﻿using CC.Application.Common.Helpers;
 using CC.Application.DTOs.External;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using CC.Utilities.Static;
+using CC.Application.Modules.Catalogs.Interfaces;
 
 namespace CC.Api.Controllers
 {

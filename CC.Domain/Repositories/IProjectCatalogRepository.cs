@@ -1,4 +1,5 @@
-﻿using CC.Domain.Entities;
+﻿using CC.Domain.Entities.Catalogs;
+using CC.Domain.Entities.Project;
 
 namespace CC.Domain.Repositories
 {

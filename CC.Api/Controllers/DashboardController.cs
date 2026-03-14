@@ -1,4 +1,4 @@
-﻿using CC.Application.Interfaces;
+﻿using CC.Application.Modules.Projects.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

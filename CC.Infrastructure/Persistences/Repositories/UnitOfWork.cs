@@ -1,4 +1,4 @@
-﻿using CC.Application.Interfaces;
+﻿using CC.Application.Modules.Identity.Interfaces;
 using CC.Domain.Repositories;
 using CC.Infrastructure.Persistences.Contexts;
 
@@ -25,6 +25,7 @@ namespace CC.Infrastructure.Persistences.Repositories
         public IProjectApiKeyRepository ProjectApiKeys { get; private set; }
 
         public ICatalogRepository Catalogs { get; private set; }
+        public ISystemAuditRepository SystemAudit { get; private set; }
 
         public UnitOfWork(AppDbContext context, IUserContext userContext)
         {
@@ -39,6 +40,7 @@ namespace CC.Infrastructure.Persistences.Repositories
             ProjectCatalogs = new ProjectCatalogRepository(_context, _userContext);
             ProjectApiKeys = new ProjectApiKeyRepository(_context, _userContext);
             Catalogs = new CatalogRepository(_context, _userContext);
+            SystemAudit = new SystemAuditRepository(_context, _userContext);
         }
 
         public void Dispose()

@@ -1,4 +1,5 @@
-﻿using CC.Domain.Entities;
+﻿using CC.Application.Modules.Identity.Interfaces;
+using CC.Domain.Entities.Project;
 using CC.Domain.Repositories;
 using CC.Infrastructure.Persistences.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,7 @@ namespace CC.Infrastructure.Persistences.Repositories
 {
     internal class ProjectApiKeyRepository : GenericRepository<ProjectApiKey, int>, IProjectApiKeyRepository
     {
-        public ProjectApiKeyRepository(AppDbContext context, Application.Interfaces.IUserContext userContext) : base(context, userContext)
+        public ProjectApiKeyRepository(AppDbContext context, IUserContext userContext) : base(context, userContext)
         {
         }
 

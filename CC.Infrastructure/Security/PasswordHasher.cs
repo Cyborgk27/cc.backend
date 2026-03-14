@@ -1,4 +1,4 @@
-﻿using CC.Application.Interfaces;
+﻿using CC.Application.Common.Interfaces;
 
 namespace CC.Infrastructure.Security
 {

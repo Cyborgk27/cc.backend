@@ -1,6 +1,6 @@
 ﻿using CC.Api.Middleware;
-using CC.Application.DTOs.User;
-using CC.Application.Interfaces;
+using CC.Application.Modules.Identity.Dtos;
+using CC.Application.Modules.Identity.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,7 +36,7 @@ namespace CC.Api.Controllers
 
         [HttpPost("save")]
         [Permission("USERS", "CREATE")]
-        public async Task<IActionResult> Save([FromBody] UserDto request)
+        public async Task<IActionResult> Save([FromBody] RegisterRequest request)
         {
             // El servicio maneja la lógica de Hash y creación/edición
             var response = await _userApp.SaveUserAsync(request);
@@ -45,7 +45,7 @@ namespace CC.Api.Controllers
 
         [HttpPut("update")]
         [Permission("USERS", "UPDATE")]
-        public async Task<IActionResult> Update([FromBody] UserDto request)
+        public async Task<IActionResult> Update([FromBody] RegisterRequest request)
         {
             var response = await _userApp.SaveUserAsync(request);
             return StatusCode(response.StatusCode, response);

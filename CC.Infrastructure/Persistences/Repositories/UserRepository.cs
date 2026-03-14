@@ -1,4 +1,5 @@
-﻿using CC.Domain.Entities;
+﻿using CC.Application.Modules.Identity.Interfaces;
+using CC.Domain.Entities.Identity;
 using CC.Domain.Repositories;
 using CC.Infrastructure.Persistences.Contexts;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,7 @@ namespace CC.Infrastructure.Persistences.Repositories
 {
     internal class UserRepository : GenericRepository<User, Guid>, IUserRepository
     {
-        public UserRepository(AppDbContext context, Application.Interfaces.IUserContext userContext) : base(context, userContext)
+        public UserRepository(AppDbContext context, IUserContext userContext) : base(context, userContext)
         {
         }
 

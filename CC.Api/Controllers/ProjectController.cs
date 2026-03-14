@@ -1,6 +1,6 @@
 ﻿using CC.Api.Middleware;
 using CC.Application.DTOs.Project.CC.Application.DTOs.Project;
-using CC.Application.Interfaces;
+using CC.Application.Modules.Projects.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -55,6 +55,14 @@ namespace CC.Api.Controllers
         public async Task<IActionResult> DeleteApiKey(int id)
         {
             var response = await _projectApp.DeleteApiKey(id);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet("catalogs")]
+        [Permission("PROJECT", "READ")]
+        public async Task<IActionResult> GetAllPageCatalogs([FromQuery] int page = 1, [FromQuery] int size = 10, [FromQuery] string? name = null)
+        {
+            var response = await _projectApp.GetPagedCatalogsAsync(page, size, name);
             return StatusCode(response.StatusCode, response);
         }
     }

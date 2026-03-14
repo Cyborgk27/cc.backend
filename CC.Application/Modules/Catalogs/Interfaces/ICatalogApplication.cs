@@ -1,0 +1,13 @@
+﻿using CC.Application.Common.Bases;
+using CC.Application.DTOs.Catalog;
+
+namespace CC.Application.Modules.Catalogs.Interfaces
+{
+    public interface ICatalogApplication
+    {
+        Task<BaseResponse<bool>> SaveCatalogAsync(CatalogDto dto);
+        Task<BaseResponse<IEnumerable<CatalogDto>>> GetPagedCatalogsAsync(int page, int size, string? name = null);
+        Task<BaseResponse<CatalogDto>> GetCatalogByIdAsync(int id);
+        Task<BaseResponse<bool>> DeleteCatalogAsync(int id);
+    }
+}

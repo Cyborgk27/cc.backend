@@ -1,5 +1,5 @@
-﻿using CC.Application.Interfaces;
-using CC.Application.Services;
+﻿using CC.Application.Common.Interfaces;
+using CC.Application.Modules.Identity.Interfaces;
 using CC.Domain.Repositories;
 using CC.Infrastructure.Persistences.Contexts;
 using CC.Infrastructure.Persistences.Repositories;

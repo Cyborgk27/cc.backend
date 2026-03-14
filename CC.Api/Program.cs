@@ -1,3 +1,4 @@
+using CC.Api.Filters;
 using CC.Api.Middleware;
 using CC.Application.Extensions;
 using CC.Domain.Extensions;
@@ -30,7 +31,10 @@ builder.Services.AddCors(options =>
 // =====================
 // Controllers
 // =====================
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<AuditFilter>();
+});
 
 // =====================
 // Swagger
