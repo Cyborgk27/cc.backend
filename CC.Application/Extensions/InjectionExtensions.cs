@@ -7,6 +7,7 @@ using CC.Application.Modules.Identity;
 using CC.Application.Modules.Identity.Interfaces;
 using CC.Application.Modules.Identity.Services;
 using CC.Application.Modules.Projects;
+using CC.Application.Modules.System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -25,6 +26,7 @@ namespace CC.Application.Extensions
             services.AddCatalogModule();
             services.AddFeatureModule();
             services.AddProjectModule();
+            services.AddSystemModule();
             return services;
         }
     }

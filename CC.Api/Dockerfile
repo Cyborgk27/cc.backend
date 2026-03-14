@@ -2,7 +2,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0-preview AS build
 WORKDIR /src
 
-# Rutas corregidas para el contexto de la raíz
+# Rutas corregidas para el contexto de la raï¿½z
 COPY ["CC.Api/CC.Api.csproj", "CC.Api/"]
 COPY ["CC.Application/CC.Application.csproj", "CC.Application/"]
 COPY ["CC.Domain/CC.Domain.csproj", "CC.Domain/"]
@@ -11,7 +11,7 @@ COPY ["CC.Utilities/CC.Utilities.csproj", "CC.Utilities/"]
 
 RUN dotnet restore "CC.Api/CC.Api.csproj"
 
-# Copiamos todo el contenido de la solución
+# Copiamos todo el contenido de la soluciï¿½n
 COPY . . 
 
 WORKDIR "/src/CC.Api"

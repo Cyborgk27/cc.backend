@@ -3,6 +3,7 @@ using System;
 using CC.Infrastructure.Persistences.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CC.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260313052251_Edit_Table_SystemLog")]
+    partial class Edit_Table_SystemLog
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -563,15 +566,6 @@ namespace CC.Infrastructure.Migrations
                     b.Property<string>("Action")
                         .HasColumnType("text");
 
-                    b.Property<Guid>("AuditCreateUser")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("AuditDeleteUser")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("AuditUpdateUser")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -584,9 +578,6 @@ namespace CC.Infrastructure.Migrations
 
                     b.Property<int>("ExecutionTime")
                         .HasColumnType("integer");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
 
                     b.Property<string>("Module")
                         .HasColumnType("text");
@@ -612,11 +603,7 @@ namespace CC.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedAt");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("SystemAudits", (string)null);
+                    b.ToTable("SystemAudits");
                 });
 
             modelBuilder.Entity("CC.Domain.Entities.Catalogs.Catalog", b =>

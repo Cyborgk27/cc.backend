@@ -3,6 +3,7 @@ using System;
 using CC.Infrastructure.Persistences.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CC.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260313050645_Add_Table_SystemLog")]
+    partial class Add_Table_SystemLog
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -554,7 +557,7 @@ namespace CC.Infrastructure.Migrations
                     b.ToTable("ProjectCatalogs", (string)null);
                 });
 
-            modelBuilder.Entity("CC.Domain.Entities.System.SystemAudit", b =>
+            modelBuilder.Entity("CC.Domain.Entities.System.SystemLog", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -563,45 +566,24 @@ namespace CC.Infrastructure.Migrations
                     b.Property<string>("Action")
                         .HasColumnType("text");
 
-                    b.Property<Guid>("AuditCreateUser")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("AuditDeleteUser")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("AuditUpdateUser")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Controller")
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Endpoint")
+                    b.Property<string>("LogLevel")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("ErrorMessage")
-                        .HasColumnType("text");
-
-                    b.Property<int>("ExecutionTime")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Module")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Operation")
+                    b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("RequestData")
+                    b.Property<string>("RequestPayload")
                         .HasColumnType("text");
 
-                    b.Property<int>("ResponseCode")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("UserEmail")
+                    b.Property<string>("StackTrace")
                         .HasColumnType("text");
 
                     b.Property<Guid?>("UserId")
@@ -612,11 +594,7 @@ namespace CC.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedAt");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("SystemAudits", (string)null);
+                    b.ToTable("SystemLog");
                 });
 
             modelBuilder.Entity("CC.Domain.Entities.Catalogs.Catalog", b =>

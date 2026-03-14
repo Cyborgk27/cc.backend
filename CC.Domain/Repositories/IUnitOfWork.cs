@@ -11,7 +11,7 @@
         IProjectCatalogRepository ProjectCatalogs { get; }
         IProjectApiKeyRepository ProjectApiKeys { get; }
         ICatalogRepository Catalogs { get; }
-
+        ISystemAuditRepository SystemAudit { get; }
         void SaveChanges();
         Task SaveChangesAsync();
     }
