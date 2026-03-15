@@ -18,7 +18,7 @@ namespace CC.Infrastructure.Persistences.Repositories
             return await _context.Set<ProjectCatalog>()
                 .Include(pc => pc.Catalog)
                 .ThenInclude(c => c.Children)
-                .Where(pc => pc.ProjectId == projectId && !pc.IsDeleted)
+                .Where(pc => pc.ProjectId == projectId && pc.IsDeleted)
                 .ToListAsync();
         }
 

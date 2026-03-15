@@ -24,7 +24,7 @@ public class DashboardService : IDashboardService
     public async Task<BaseResponse<ProjectDashboardDto>> GetUserDashboardAsync()
     {
         // 1. Lógica de filtrado: Si es Admin ve todo, si no, solo lo suyo
-        var isAdmin = _userContext.IsInRole("Admin");
+        var isAdmin = _userContext.IsInRole("ADMINISTRATOR");
         var currentUserId = _userContext.UserId;
 
         var projects = await _unitOfWork.Projects.GetAsync(
